@@ -11,10 +11,17 @@ Recordar iniciar el entorno (venv) para poder instalar los paquetes de python!
 > venv/scripts/activate (En powershell)
 
 Para partir el servidor
+
 Requisitos:
+
 > Docker
+
 Comandos utilizados para crear bd en mysql:
+
 > docker run --name mysqldatabase -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=test mysql
+
 Una vez creada la bd dentro de docker, puedes correr el servidor utilizando el comando:
+
 >uvicorn server:app --reload
+
 Este comando debe ser ejecutado dentro de la carpeta FastAPI_DB.
