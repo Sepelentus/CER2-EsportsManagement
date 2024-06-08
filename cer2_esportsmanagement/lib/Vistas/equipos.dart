@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-
-
-
 class VistaEquipos extends StatefulWidget {
   const VistaEquipos({Key? key}) : super(key: key);
 
@@ -62,33 +59,68 @@ class _VistaEquiposState extends State<VistaEquipos>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('EQUIPOS'),
-        titleTextStyle: TextStyle(
-        fontFamily: 'Outfit',
-        fontSize: 22,
-        letterSpacing: 4
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/appba.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            AppBar(
+              title: Text('EQUIPOS'),
+              titleTextStyle: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 22,
+                letterSpacing: 4,
+              ),
+              
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+            ),
+          ],
         ),
       ),
-      body: Padding(
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/wall.jpeg'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Padding(
         padding: const EdgeInsets.all(10),
-        child: ListTile(
-          title: Text('%Nombre%', style: TextStyle(fontSize: 20, 
-          fontFamily: 'Outfit',
-          fontWeight: FontWeight.bold,
-          color: Color.fromARGB(255,48,25,95))),
-          subtitle: Text('Jugadores: %%'),
-          leading: Icon(Icons.sports_esports, size: 35, color: const Color.fromARGB(255,48,25,95),),
-          trailing: IconButton(
-            icon : Icon(Icons.arrow_forward_ios),
-            onPressed: () {
-              //Accion (Slash a info de jugadores)
-            },),
-          tileColor: const Color.fromARGB(255,229,203,93),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+        child: Card(
+          elevation: 5,
+          color: const Color.fromARGB(255,229,203,93),
+          child: ListTile(
+            title: Text('%Nombre%', style: TextStyle(fontSize: 20, 
+            fontFamily: 'Outfit',
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255,48,25,95))),
+            subtitle: Text('Jugadores: %%'),
+            leading: Icon(Icons.sports_esports, size: 35, color: const Color.fromARGB(255,48,25,95),),
+            trailing: IconButton(
+              icon : Icon(Icons.arrow_forward_ios),
+              onPressed: () {
+                //Accion (Splash a info de jugadores)
+              },),
+            tileColor: const Color.fromARGB(255,229,203,93),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ),
+      ),
+        ]
+
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
