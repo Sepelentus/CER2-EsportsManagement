@@ -5,6 +5,10 @@ class SplashRocket extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('Splash Rocket');
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Rocket League'),
+      ),
+    );
   }
 }
