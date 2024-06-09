@@ -19,7 +19,7 @@ class VistaResultados extends StatelessWidget {
               ),
             ),
             AppBar(
-              title: Text('EQUIPOS'),
+              title: Text('RESULTADOS'),
               titleTextStyle: TextStyle(
                 fontFamily: 'Outfit',
                 fontSize: 22,

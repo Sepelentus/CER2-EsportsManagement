@@ -19,7 +19,7 @@ class VistaCalendarios extends StatelessWidget {
               ),
             ),
             AppBar(
-              title: Text('EQUIPOS'),
+              title: Text('CALENDARIO'),
               titleTextStyle: TextStyle(
                 fontFamily: 'Outfit',
                 fontSize: 22,
