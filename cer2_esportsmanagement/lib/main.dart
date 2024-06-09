@@ -1,4 +1,4 @@
-import 'package:cer2_esportsmanagement/Principal/principal.dart';
+import 'package:cer2_esportsmanagement/Vistas/principal.dart';
 import 'package:flutter/material.dart';
 
 void main() {

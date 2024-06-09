@@ -25,7 +25,6 @@ class VistaCalendarios extends StatelessWidget {
                 fontSize: 22,
                 letterSpacing: 4,
               ),
-              
               backgroundColor: Colors.transparent,
               elevation: 0.0,
             ),

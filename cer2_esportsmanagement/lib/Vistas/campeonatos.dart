@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:vertical_card_pager/vertical_card_pager.dart';
 
@@ -6,7 +7,7 @@ class VistaCampeonatos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> titles = ["VALORANT", "FIFA", "DOTA", "LOL"];
+    final List<String> titles = ["VALORANT", "FIFA", "Rocket League"];
     
     final List<Widget> images = [
         Container(
@@ -28,15 +29,7 @@ class VistaCampeonatos extends StatelessWidget {
       Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/dota.jpg'),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-      Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/Lol.jpg'),
+            image: AssetImage('assets/images/Rocket.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -95,8 +88,9 @@ class VistaCampeonatos extends StatelessWidget {
                   onSelectedItem: (index) {
                     
                   },
-                  initialPage: 2, 
-                  align: ALIGN.CENTER, 
+          
+                  initialPage: 1, 
+                  align: ALIGN.LEFT, 
                   physics: ClampingScrollPhysics() 
                   ),
             ),
