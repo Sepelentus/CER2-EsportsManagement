@@ -36,7 +36,7 @@ class PaginaPrincipal extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: [VistaEquipos(), VistaCampeonatos(), VistaResultados(), VistaCalendarios()],
+          children: [getTeamsScreen(), VistaCampeonatos(), VistaResultados(), VistaCalendarios()],
         ),
       ),
     );

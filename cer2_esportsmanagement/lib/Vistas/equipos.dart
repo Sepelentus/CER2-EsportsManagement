@@ -1,58 +1,62 @@
-import 'package:cer2_esportsmanagement/Splash/SplashJugadores.dart';
-import 'package:cer2_esportsmanagement/Splash/splashAddEquipos.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-class VistaEquipos extends StatelessWidget {
-  const VistaEquipos({super.key});
-
-  @override
+class getTeamsScreen extends StatefulWidget {
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/appba.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            AppBar(
-              title: Text('EQUIPOS'),
-              titleTextStyle: TextStyle(
-                fontFamily: 'Outfit',
-                fontSize: 22,
-                letterSpacing: 4,
-              ),
-              
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-            ),
-          ],
-        ),
-      ),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/wall.jpeg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Padding(
-        padding: const EdgeInsets.all(10),
-        child: Card(
-          elevation: 5,
+  State<getTeamsScreen> createState() => _getTeamsScreenState();
+}
+
+class Equipo {
+  final int id;
+  final String nombre;
+
+  Equipo({required this.id, required this.nombre});
+
+  factory Equipo.fromJson(Map<String, dynamic> json) {
+    return Equipo(
+      id: json['id'],
+      nombre: json['nombre'],
+    );
+  }
+}
+
+// Get and List stuff from equipos
+Future<List<Equipo>> fetchEquipos() async {
+  final response = await http.get(Uri.parse('http://10.0.2.2:8000/equipos/'));
+  if (response.statusCode == 200) {
+    List<dynamic> equiposJson = jsonDecode(response.body);
+    return equiposJson.map((json) => Equipo.fromJson(json)).toList();
+  } else {
+    throw Exception('Failed to load equipos');
+  }
+}
+
+  class _getTeamsScreenState extends State<getTeamsScreen>{
+
+  @override
+  void initState(){
+    super.initState();
+    fetchEquipos();
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return FutureBuilder<List<Equipo>>(
+      future: fetchEquipos(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              Equipo equipo = snapshot.data![index];
+              return Card(
+                elevation: 5,
           color: const Color.fromARGB(255,229,203,93),
           child: ListTile(
-            title: Text('%Nombre%', style: TextStyle(fontSize: 20, 
+            title: Text(equipo.nombre, style: TextStyle(fontSize: 20, 
             fontFamily: 'Outfit',
             fontWeight: FontWeight.bold,
             color: Color.fromARGB(255,48,25,95))),
@@ -61,23 +65,26 @@ class VistaEquipos extends StatelessWidget {
             trailing: IconButton(
               icon : Icon(Icons.arrow_forward_ios),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder:(context) => VerJugadores()));
                 //Accion (Splash a info de jugadores)
-              }),
+              },),
             tileColor: const Color.fromARGB(255,229,203,93),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-        ),
-      ),
-        ]
-      ),
-    floatingActionButton: FloatingActionButton(onPressed: (){
-      Navigator.push(context, MaterialPageRoute(builder:(context) => AgregarEquipo()));
-    },
-    child: Icon(Icons.add),
-    backgroundColor: const Color.fromARGB(255,229,203,93))
+                // Build your card for 'equipo' here.
+                // You can access the team's name with 'equipo.nombre'
+                // and the players' names with 'equipo.jugadores'.
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
     );
   }
+
 }
