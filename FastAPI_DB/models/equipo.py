@@ -1,5 +1,6 @@
-from sqlalchemy import Table, Column, Integer, String, ForeignKey
+from sqlalchemy import JSON, Table, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
 from config.db import meta
 
 Equipo = Table(
@@ -18,16 +19,20 @@ Jugador = Table(
     Column('equipo_id', Integer, ForeignKey('equipos.id'))
 )
 
-Partido = Table(
-    'partidos', meta,
-    Column('id', Integer, primary_key=True),
-    Column('fecha', String(40)),
-    Column('lugar', String(100)),
-    Column('campeonato_id', Integer, ForeignKey('campeonatos.id'))  # Relación con campeonato
-)
+Base = declarative_base()
 
-EquipoPartido = Table(
-    'equipo_partido', meta,
-    Column('equipo_id', Integer, ForeignKey('equipos.id'), primary_key=True),
-    Column('partido_id', Integer, ForeignKey('partidos.id'), primary_key=True)
-)
+class Partido(Base):
+    __tablename__ = 'partidos'
+    id = Column(Integer, primary_key=True)
+    fecha = Column(String(40))
+    lugar = Column(String(100))
+    campeonato_id = Column(Integer, ForeignKey('campeonatos.id'))
+    equipos = relationship("EquipoPartido", backref="partido")
+    def __repr__(self):
+        equipos_ids = [equipo.equipo_id for equipo in self.equipos]
+        return f"Partido(id={self.id}, fecha={self.fecha}, lugar={self.lugar}, campeonato_id={self.campeonato_id}, equipos_ids={equipos_ids})"
+
+class EquipoPartido(Base):
+    __tablename__ = 'equipo_partido'
+    equipo_id = Column(Integer, ForeignKey('equipos.id'), primary_key=True)
+    partido_id = Column(Integer, ForeignKey('partidos.id'), primary_key=True)

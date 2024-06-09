@@ -1,10 +1,13 @@
+# main.py
 from fastapi import FastAPI
-from routes import team
+from config.db import init_db
 
 app = FastAPI()
 
-app.include_router(team.router, prefix="/equipos", tags=["equipos"])
+@app.on_event("startup")
+async def on_startup():
+    await init_db()
 
-@app.get("/")
-async def read_root():
-    return {"message": "Hello World"}
+# Include your router
+from routes import team
+app.include_router(team.router)

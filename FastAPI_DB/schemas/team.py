@@ -6,8 +6,6 @@ from .game import Partido
 class Equipo(BaseModel):
     id: int
     nombre: str
-    lista_jugadores: List[Jugador]
-    lista_juegos: List[Partido]
 
     class Config:
         orm_mode = True

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 
 class Campeonato(BaseModel):
@@ -8,6 +8,7 @@ class Campeonato(BaseModel):
     juego: str
     lista_reglas: List[str]
     premios: List[str]
+    # partidos_ids: Optional[List[int]]
 
     class Config:
         orm_mode = True
