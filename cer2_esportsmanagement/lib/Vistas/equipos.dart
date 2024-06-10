@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:cer2_esportsmanagement/Splash/splashAddEquipos.dart';
+import 'package:cer2_esportsmanagement/Add/splashAddEquipos.dart';
 import 'package:cer2_esportsmanagement/Splash/splashJugadores.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
