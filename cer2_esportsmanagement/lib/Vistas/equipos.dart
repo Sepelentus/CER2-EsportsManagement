@@ -1,12 +1,12 @@
 import 'dart:convert';
-
+import 'package:cer2_esportsmanagement/Splash/splashAddEquipos.dart';
+import 'package:cer2_esportsmanagement/Splash/splashJugadores.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class getTeamsScreen extends StatefulWidget {
-
+class VistaEquipos extends StatefulWidget {
   @override
-  State<getTeamsScreen> createState() => _getTeamsScreenState();
+  State<VistaEquipos> createState() => _VistaEquiposState();
 }
 
 class Equipo {
@@ -23,7 +23,6 @@ class Equipo {
   }
 }
 
-// Get and List stuff from equipos
 Future<List<Equipo>> fetchEquipos() async {
   final response = await http.get(Uri.parse('http://10.0.2.2:8000/equipos/'));
   if (response.statusCode == 200) {
@@ -34,57 +33,99 @@ Future<List<Equipo>> fetchEquipos() async {
   }
 }
 
-  class _getTeamsScreenState extends State<getTeamsScreen>{
+class _VistaEquiposState extends State<VistaEquipos> {
+  late Future<List<Equipo>> futureEquipos;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    fetchEquipos();
+    futureEquipos = fetchEquipos();
   }
 
   @override
-  Widget build(BuildContext context){
-    return FutureBuilder<List<Equipo>>(
-      future: fetchEquipos(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              Equipo equipo = snapshot.data![index];
-              return Card(
-                elevation: 5,
-          color: const Color.fromARGB(255,229,203,93),
-          child: ListTile(
-            title: Text(equipo.nombre, style: TextStyle(fontSize: 20, 
-            fontFamily: 'Outfit',
-            fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255,48,25,95))),
-            subtitle: Text('Jugadores: %%'),
-            leading: Icon(Icons.sports_esports, size: 35, color: const Color.fromARGB(255,48,25,95),),
-            trailing: IconButton(
-              icon : Icon(Icons.arrow_forward_ios),
-              onPressed: () {
-                //Accion (Splash a info de jugadores)
-              },),
-            tileColor: const Color.fromARGB(255,229,203,93),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/appba.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            AppBar(
+              title: Text('EQUIPOS'),
+              titleTextStyle: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 22,
+                letterSpacing: 4,
+              ),
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+            ),
+          ],
+        ),
+      ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/wall.jpeg'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-                // Build your card for 'equipo' here.
-                // You can access the team's name with 'equipo.nombre'
-                // and the players' names with 'equipo.jugadores'.
-              );
+          FutureBuilder<List<Equipo>>(
+            future: futureEquipos,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                  padding: const EdgeInsets.all(10),
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      elevation: 5,
+                      color: const Color.fromARGB(255,229,203,93),
+                      child: ListTile(
+                        title: Text(snapshot.data![index].nombre, style: TextStyle(fontSize: 20, 
+                        fontFamily: 'Outfit',
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255,48,25,95))),
+                        leading: Icon(Icons.sports_esports, size: 35, color: const Color.fromARGB(255,48,25,95),),
+                        trailing: IconButton(
+                          icon : Icon(Icons.arrow_forward_ios),
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder:(context) => JugadoresPage(equipoId: snapshot.data![index].id.toString())));
+                            print(snapshot.data![index].id);
+                          }),
+                        tileColor: const Color.fromARGB(255,229,203,93),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+              return CircularProgressIndicator();
             },
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder:(context) => AgregarEquipo()));
+        },
+        child: Icon(Icons.add),
+        backgroundColor: const Color.fromARGB(255,229,203,93),
+      ),
     );
   }
-
 }

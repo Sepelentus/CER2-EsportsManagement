@@ -1,4 +1,4 @@
-import 'package:cer2_esportsmanagement/Splash/splashFifa.dart';
+import 'package:cer2_esportsmanagement/Splash/splashcampeonatos.dart';
 import 'package:cer2_esportsmanagement/Splash/splashRocket.dart';
 import 'package:cer2_esportsmanagement/Splash/splashValo.dart';
 import 'package:flutter/cupertino.dart';
@@ -100,7 +100,7 @@ class VistaCampeonatos extends StatelessWidget {
                           Navigator.push(
                             context,
                             CupertinoPageRoute(
-                              builder: (context) => SplashFifa(),
+                              builder: (context) => SplashCampeonatos(),
                             ),
                           );
                         }

@@ -1,151 +1,103 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class AgregarEquipo extends StatefulWidget {
-  const AgregarEquipo({super.key});
-
   @override
   _AgregarEquipoState createState() => _AgregarEquipoState();
 }
 
 class _AgregarEquipoState extends State<AgregarEquipo> {
-  List<Widget> playerFields = [];
-  int playerCount = 1;
+  String? nombre;
+  String? id;
 
-  void initState() {
-    super.initState();
-    playerFields.add(
-      Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: TextField(
-          decoration: InputDecoration(
-            labelText: 'Nombre del jugador 1',
-            filled: true,
-            fillColor: const Color.fromARGB(255, 255, 255, 255),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-      ),
+  Future<void> saveTeamName(String nombre, String id) async {
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:8000/equipos/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'nombre': nombre,
+        'id': "0",
+      }),
     );
-  }
 
-    void addPlayerField() {
-    if (playerCount < 5) {
-      setState(() {
-        playerFields.add(
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: 'Nombre del jugador ${playerCount + 1}',
-                filled: true,
-                fillColor: const Color.fromARGB(255, 255, 255, 255),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          ),
-        );
-        playerCount++;
-      });
+    if (response.statusCode != 200) {
+      print('Failed to save team name. Server responded with: ${response.body}');
+      throw Exception('Failed to save team name');
     }
-  }
 
+    // Actualiza el estado del widget para forzar una reconstrucción
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: PreferredSize(
-      preferredSize: Size.fromHeight(kToolbarHeight),
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/appba.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          AppBar(
-            title: Text('Agregar Equipos'),
-            titleTextStyle: TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: 22,
-              letterSpacing: 4,
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0.0,
-          ),
-        ],
-      ),
-    ),
-    body: Stack(
+    return Scaffold(
+      appBar: PreferredSize(
+    preferredSize: Size.fromHeight(kToolbarHeight),
+    child: Stack(
       children: [
         Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/wall.jpeg'),
+              image: AssetImage('assets/images/appba.jpg'),
               fit: BoxFit.cover,
             ),
           ),
         ),
-        Card(
-          margin: EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/wall.jpeg'),
-              fit: BoxFit.cover,
-            ),
+        AppBar(
+          title: Text('CAMPEONATOS'),
+          titleTextStyle: TextStyle(
+            fontFamily: 'Outfit',
+            fontSize: 22,
+            letterSpacing: 4,
           ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        labelText: 'Nombre del equipo',
-                        filled: true,
-                                fillColor: const Color.fromARGB(255, 255, 255, 255),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                      ),
-                    ),
-                  ),
-                  Divider(
-                    color: const Color.fromARGB(255,229,203,93),
-                    thickness: 2,
-                    indent: 30,
-                    endIndent: 30,
-                  ),
-                  
-                  ...playerFields,
-                  if (playerCount < 5)
-                    ElevatedButton(
-                      onPressed: addPlayerField,
-                      child: Text('Añadir jugador'),
-                    ),
-                ],
-              ),
-            ),
-          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
         ),
       ],
     ),
-    floatingActionButton: Container(
-  alignment: Alignment.bottomCenter,
-  child: FloatingActionButton(
-    onPressed: () {
-      // Acción al presionar el botón
-    },
-    child: Icon(Icons.add),
   ),
-),
-  );
-}
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/wall.jpeg'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: TextField(
+                  onChanged: (value) {
+                    nombre = value;
+                    id = "0";
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Nombre del equipo',
+                    filled: true,
+                    fillColor: const Color.fromARGB(255, 255, 255, 255),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (nombre != null && id != null) {
+                    saveTeamName(nombre!, id!);
+                  }
+                },
+                child: Text('Guardar'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
