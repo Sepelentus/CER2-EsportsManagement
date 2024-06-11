@@ -3,8 +3,8 @@ import 'package:cer2_esportsmanagement/Vistas/equipos.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:icons_plus/icons_plus.dart';
+import 'package:intl/intl.dart';
 
 class Campeonato {
   final int id;
@@ -42,13 +42,16 @@ Future<List<Campeonato>> fetchCampeonatos() async {
     throw Exception('Failed to load campeonatos');
   }
 }
-Future<void> updateCampeonato(String fecha, String juego, List<String> lista_reglas, List<String> premios, String id) async {
+
+Future<void> updateCampeonato(String fecha, String juego,
+    List<String> lista_reglas, List<String> premios, int id) async {
   final response = await http.put(
-    Uri.parse('http://10.0.2.2:8000/campeonatos/$id'),
+    Uri.parse('http://10.0.2.2:8000/campeonatos/$id'), // Include the id in the URL
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
     body: jsonEncode(<String, dynamic>{
+      'id': id,
       'fecha': fecha,
       'juego': juego,
       'lista_reglas': lista_reglas,
@@ -66,7 +69,8 @@ Future<void> updateCampeonato(String fecha, String juego, List<String> lista_reg
 }
 
 Future<void> deleteCampeonato(int id) async {
-  final response = await http.delete(Uri.parse('http://10.0.2.2:8000/campeonatos/${id}'));
+  final response =
+      await http.delete(Uri.parse('http://10.0.2.2:8000/campeonatos/${id}'));
 
   if (response.statusCode == 200) {
     print('Campeonato deleted successfully.');
@@ -76,9 +80,9 @@ Future<void> deleteCampeonato(int id) async {
     throw Exception('Failed to delete campeonato.');
   }
 }
+
 // ignore: must_be_immutable
 class SplashCampeonatos extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
   String fecha = '';
   String juego = '';
   String id = '';
@@ -86,7 +90,7 @@ class SplashCampeonatos extends StatelessWidget {
   List<String> premios = [];
   final fechaController = TextEditingController();
   SplashCampeonatos({Key? key}) : super(key: key);
-  
+
   get campeonatoId => 0;
 
   @override
@@ -113,7 +117,6 @@ class SplashCampeonatos extends StatelessWidget {
               ),
               backgroundColor: Colors.transparent,
               elevation: 0.0,
-              
             ),
           ],
         ),
@@ -128,7 +131,6 @@ class SplashCampeonatos extends StatelessWidget {
               ),
             ),
           ),
-          
           FutureBuilder<List<Campeonato>>(
             future: fetchCampeonatos(),
             builder: (context, snapshot) {
@@ -154,98 +156,148 @@ class SplashCampeonatos extends StatelessWidget {
                             ListTile(
                               leading: Icon(
                                 BoxIcons.bx_trophy,
-                                size: 50, color: Colors.amber,
+                                size: 50,
+                                color: Colors.amber,
                               ),
                               title: Text(snapshot.data![index].juego,
                                   style: TextStyle(
                                       fontFamily: 'Outfit',
                                       fontWeight: FontWeight.bold,
                                       fontSize: 22,
-                                      letterSpacing: 4, color: Colors.amber)),
-                              subtitle: Text( style: TextStyle(color: Colors.white),
+                                      letterSpacing: 4,
+                                      color: Colors.amber)),
+                              subtitle: Text(
+                                  style: TextStyle(color: Colors.white),
                                   'Fecha: ${snapshot.data![index].fecha}\nReglas: ${snapshot.data![index].lista_reglas.join(', ')}\nPremios: ${snapshot.data![index].premios.join(', ')}'),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-
-                                IconButton(
-  icon: Icon(Icons.edit),
-  onPressed: () {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Editar Campeonato'),
-          content: Form(
-            key: _formKey,
-            child: Column(
-              children: <Widget>[
-                TextFormField(
-  initialValue: snapshot.data![index].juego,
-  decoration: InputDecoration(labelText: 'Nombre del Juego'),
-  onSaved: (value) {
-    // Asegúrate de que updateCampeonato acepta los mismos parámetros que addCampeonato
-    updateCampeonato(fecha, juego, lista_reglas, premios, id);
-  },
-),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Cancelar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Guardar'),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save(); // Esto desencadenará el onSaved de TextFormField
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  },
-),
-                                IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red, size: 30,),
-                                  onPressed: () async {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text('Confirmar eliminación'),
-                                          content: Text('¿Estás seguro de que quieres eliminar este campeonato?'),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: Text('Cancelar'),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: Text('Eliminar'),
-                                              onPressed: () async {
-                                                await deleteCampeonato(snapshot.data![index].id);
-                                                Navigator.of(context).pop(); // Recarga la página
-                                              },
-                                            ),
-                                          ],
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                      icon: Icon(Icons.edit), color: Colors.white,
+                                      onPressed: () {
+                                        TextEditingController idController = TextEditingController(text: snapshot.data![index].id.toString());
+                                        TextEditingController fechaController = TextEditingController(text: snapshot.data![index].fecha);
+                                        TextEditingController juegoController = TextEditingController(text: snapshot.data![index].juego);
+                                        TextEditingController reglasController = TextEditingController(text: snapshot.data![index].lista_reglas.join(', '));
+                                        TextEditingController premiosController = TextEditingController(text: snapshot.data![index].premios.join(', '));
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text('Editar Campeonato'),
+                                              content: SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: <Widget>[
+                                                    TextField(
+                                                      controller: idController,
+                                                      decoration: InputDecoration(hintText: "ID"),
+                                                      enabled: false, // Esto hace que el TextField sea de solo lectura
+                                                    ),
+                                                    TextFormField(
+                  controller: fechaController,
+                  decoration: InputDecoration(labelText: 'Fecha'),
+                  onTap: () async {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                  final DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (pickedDate != null) {
+                    final TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (pickedTime != null) {
+                      final DateTime finalDateTime = DateTime(
+                        pickedDate.year,
+                        pickedDate.month,
+                        pickedDate.day,
+                        pickedTime.hour,
+                        pickedTime.minute,
+                      );
+                      fecha = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(finalDateTime.toUtc());
+                      fechaController.text = fecha;
+                    }
+                  }
+                },
+                ),
+                                                    TextField(
+                                                      controller: juegoController,
+                                                      decoration: InputDecoration(hintText: "Juego"),
+                                                    ),
+                                                    TextField(
+                                                      controller: reglasController,
+                                                      decoration: InputDecoration(hintText: "Reglas"),
+                                                    ),
+                                                    TextField(
+                                                      controller: premiosController,
+                                                      decoration: InputDecoration(hintText: "Premios"),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: Text('Cancelar'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text('Guardar'),
+                                                  onPressed: () {
+                                                    // Aquí puedes llamar a tu función updateCampeonato
+                                                    updateCampeonato(fechaController.text, juegoController.text, reglasController.text.split(','), premiosController.text.split(','), int.parse(idController.text));
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
                                         );
                                       },
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                            
-                            
+                                    )
+                                  ,IconButton(
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                      size: 30,
+                                    ),
+                                    onPressed: () async {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title:
+                                                Text('Confirmar eliminación'),
+                                            content: Text(
+                                                '¿Estás seguro de que quieres eliminar este campeonato?'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: Text('Cancelar'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: Text('Eliminar'),
+                                                onPressed: () async {
+                                                  await deleteCampeonato(
+                                                      snapshot.data![index].id);
+                                                  Navigator.of(context)
+                                                      .pop(); // Recarga la página
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                             ButtonBar(
                               mainAxisSize: MainAxisSize.min,
@@ -262,7 +314,6 @@ class SplashCampeonatos extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            
                           ],
                         ),
                       ),
@@ -280,16 +331,14 @@ class SplashCampeonatos extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton:
-          FloatingActionButton(
-              onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder:(context) => Splashadddcampeonato()));
-              },
-              child: Icon(Icons.add),
-              backgroundColor: const Color.fromARGB(255,229,203,93),
-            ),
-
-      
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => Splashadddcampeonato()));
+        },
+        child: Icon(Icons.add),
+        backgroundColor: const Color.fromARGB(255, 229, 203, 93),
+      ),
     );
   }
 }
