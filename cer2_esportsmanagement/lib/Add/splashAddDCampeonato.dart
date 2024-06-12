@@ -64,7 +64,7 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
           ),
         ),
         AppBar(
-          title: Text('CAMPEONATOS'),
+          title: Text('AÑADIR CAMPEONATOS'),
           titleTextStyle: TextStyle(
             fontFamily: 'Outfit',
             fontSize: 22,
@@ -96,22 +96,20 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                   TextFormField(
                     style: TextStyle(color: const Color.fromARGB(255,48,25,95)),
                     controller: fechaController,
-                    decoration: InputDecoration(
-                      errorStyle: TextStyle(
-                        color: Color.fromARGB(255, 240, 3, 3),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15
+                    decoration: InputDecoration(labelText: 'Fecha de campeonato',labelStyle: TextStyle(color: Colors.white),filled: true, fillColor: const Color.fromARGB(255, 48, 25, 95), prefixIcon: Icon(Icons.date_range_outlined,color: Colors.amber),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: BorderSide(color: Colors.amber, width: 2.0),
                       ),
-                border: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(
-                    const Radius.circular(10.0),
-                  ),
-                ),
-                filled: true,
-                hintStyle: TextStyle(color: Colors.grey[700]),
-                hintText: "Fecha",
-                prefixIcon: Icon(Icons.calendar_today, color: Color.fromARGB(255, 255,255,255)),
-                fillColor: const Color.fromARGB(255,229,203,93)),
+                        ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor, introduce una fecha.';
@@ -153,17 +151,20 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                   TextFormField(
                     style: TextStyle(color: const Color.fromARGB(255,48,25,95)),
                     controller: juegoController,
-                    decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(
-                    const Radius.circular(10.0),
-                  ),
-                ),
-                prefixIcon: Icon(Icons.sports_esports, color: Color.fromARGB(255, 255,255,255),),
-                filled: true,
-                hintStyle: TextStyle(color: Colors.grey[700]),
-                hintText: "Juego",
-                fillColor: const Color.fromARGB(255,229,203,93)),
+                    decoration: InputDecoration(labelText: 'Juego',labelStyle: TextStyle(color: Colors.white),filled: true, fillColor: const Color.fromARGB(255, 48, 25, 95), prefixIcon: Icon(Icons.sports_esports_outlined,color: Colors.amber),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                      ),
+                        ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor, introduce una juego.';
@@ -191,17 +192,20 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                   TextFormField(
               style: TextStyle(color: const Color.fromARGB(255,48,25,95)),
                     controller: lista_reglasControler,
-                    decoration: InputDecoration(
-                prefixIcon: Icon(Icons.rule, color: Color.fromARGB(255, 255,255,255)),
-                border: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(
-                    const Radius.circular(10.0),
-                  ),
-                ),
-                filled: true,
-                hintStyle: TextStyle(color: Colors.grey[700]),
-                hintText: "Lista de reglas (separadas por comas)",
-                fillColor: const Color.fromARGB(255,229,203,93)),
+                    decoration: InputDecoration(labelText: 'Lista de reglas (Separados por Coma)',labelStyle: TextStyle(color: Colors.white),filled: true, fillColor: const Color.fromARGB(255, 48, 25, 95), prefixIcon: Icon(Icons.my_library_books,color: Colors.amber),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                      ),
+                        ),
               validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor, introduce una Lista de reglas.';
@@ -229,17 +233,20 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
               TextFormField(
               style: TextStyle(color: const Color.fromARGB(255,48,25,95)),
                     controller: premiosController,
-                    decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(
-                    const Radius.circular(10.0),
-                  ),
-                ),
-                filled: true,
-                hintStyle: TextStyle(color: Colors.grey[700]),
-                hintText: "Premios (separados por comas)",
-                prefixIcon: Icon(Icons.emoji_events, color: Color.fromARGB(255, 255,255,255)),
-                fillColor: const Color.fromARGB(255,229,203,93)),
+                    decoration: InputDecoration(labelText: 'Premios (Separados por Coma)',labelStyle: TextStyle(color: Colors.white),filled: true, fillColor: const Color.fromARGB(255, 48, 25, 95), prefixIcon: Icon(Icons.my_library_books,color: Colors.amber),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                      ),
+                        ),
               validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor, introduce un premio.';
@@ -262,13 +269,22 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                         ),
                   SizedBox(height: 10),
                   ElevatedButton(
+                    style: ButtonStyle( backgroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(255,48,25,95)), // Color de fondo
+    shape: WidgetStateProperty.all<RoundedRectangleBorder>( // Forma y borde
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(25.0),
+        side: BorderSide(color: Colors.amber, width: 2.0),
+      ),
+    ),
+    padding: WidgetStateProperty.all<EdgeInsets>(EdgeInsets.all(10.0)), // Espaciado interno
+  ),
                     onPressed: () async {
                         await addCampeonato(fecha, juego, lista_reglas, premios, id);
                         setState(() {
                         });
                     },
-                    child: Text('Añadir Campeonato'),
-                  ),
+                    child: Text('Añadir Campeonato', style: TextStyle(color: Colors.amber),
+                  )),
                 ],
               ),
             ),

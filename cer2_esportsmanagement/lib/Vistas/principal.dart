@@ -1,5 +1,5 @@
 import 'package:cer2_esportsmanagement/Splash/splashcampeonatos.dart';
-import 'package:cer2_esportsmanagement/Vistas/calendarios.dart';
+import 'package:cer2_esportsmanagement/Vistas/AddJugador.dart';
 //import 'package:cer2_esportsmanagement/Vistas/campeonatos.dart';
 import 'package:cer2_esportsmanagement/Vistas/resultados.dart';
 import 'package:flutter/material.dart';
@@ -32,11 +32,11 @@ class PaginaPrincipal extends StatelessWidget {
             labelColor: const Color.fromARGB(255,229,203,93),
             unselectedLabelColor: Colors.white60,
             indicatorColor: const Color.fromARGB(255,23,184,255),
-            tabs: [Tab(icon: Icon(BoxIcons.bx_trophy)), Tab(icon: Icon(BoxIcons.bx_notepad)), Tab(icon: Icon(BoxIcons.bx_calendar))],
+            tabs: [Tab(icon: Icon(BoxIcons.bx_trophy)), Tab(icon: Icon(BoxIcons.bx_notepad)), Tab(icon: Icon(BoxIcons.bx_user_plus))],
           ),
         ),
         body: TabBarView(
-          children: [SplashCampeonatos(), VistaResultados(), VistaCalendarios()],
+          children: [SplashCampeonatos(), VistaResultados(), SplashAddJugador()],
         ),
       ),
     );
