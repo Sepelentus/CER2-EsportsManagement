@@ -53,7 +53,7 @@ class _JugadoresPageState extends State<JugadoresPage> {
         itemCount: jugadores.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text('${jugadores[index]['conjunto']} - ${jugadores[index]['nombre']}', style: TextStyle(color: Colors.black)),
+            title: Text(' ${jugadores[index]['nombre']}', style: TextStyle(color: Colors.black)),
           );
         },
       ),
