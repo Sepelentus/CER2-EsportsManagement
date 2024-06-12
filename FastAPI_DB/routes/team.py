@@ -143,6 +143,17 @@ async def read_equipos(db: AsyncSession = Depends(get_db)):
         nombre=equipo.nombre,
     ) for equipo in equipos]
 
+@router.get("/equipos/{equipo_id}", response_model=EquipoSchema)
+async def read_equipo_by_id(equipo_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Equipo).where(Equipo.c.id == equipo_id))
+    equipo = result.fetchone()
+    if equipo is None:
+        raise HTTPException(status_code=404, detail="Equipo not found")
+    return EquipoSchema(
+        id=equipo.id,
+        nombre=equipo.nombre
+    )
+
 @router.get("/jugadores/", response_model=List[JugadorSchema])
 async def read_jugadores(db: AsyncSession = Depends(get_db)):
     j = Jugador.join(Equipo, Jugador.c.equipo_id == Equipo.c.id)
