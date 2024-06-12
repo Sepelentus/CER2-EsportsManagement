@@ -36,14 +36,12 @@ Future<void> fetchJugadores() async {
     return Scaffold(
       appBar: AppBar(
         title: Text('JUGADORES'),
-        // Resto de tu código...
       ),
       body: ListView.builder(
         itemCount: jugadores.length,
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(jugadores[index]['nombre'], style: TextStyle(color: Colors.black)),
-            // Aquí puedes añadir más detalles sobre cada jugador
           );
         },
       ),

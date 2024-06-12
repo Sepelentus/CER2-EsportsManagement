@@ -46,7 +46,7 @@ Future<List<Campeonato>> fetchCampeonatos() async {
 Future<void> updateCampeonato(String fecha, String juego,
     List<String> lista_reglas, List<String> premios, int id) async {
   final response = await http.put(
-    Uri.parse('http://10.0.2.2:8000/campeonatos/$id'), // Include the id in the URL
+    Uri.parse('http://10.0.2.2:8000/campeonatos/$id'), 
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },

@@ -1,58 +1,168 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class VistaPruebas extends StatelessWidget {
-  const VistaPruebas({Key? key}) : super(key: key);
-  
-  get id => 0;
+import 'package:intl/intl.dart';
 
-  Future<List<dynamic>> fetchFromAPI(String endpoint) async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8000/$endpoint'));
+class Splashadddcampeonato extends StatefulWidget {
+  @override
+  _SplashadddcampeonatoState createState() => _SplashadddcampeonatoState();
+}
+
+class _SplashadddcampeonatoState extends State<Splashadddcampeonato> {
+  final _formKey = GlobalKey<FormState>();
+  String fecha = '';
+  String juego = '';
+  String id = '';
+  List<String> lista_reglas = [];
+  List<String> premios = [];
+  final fechaController = TextEditingController();
+  final juegoController = TextEditingController();
+  final lista_reglasControler = TextEditingController();
+  final premiosController = TextEditingController();
+
+Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas, List<String> premios, String id) async {
+  // Valida el formulario
+  if (_formKey.currentState!.validate()) {
+    // Si el formulario es válido, entonces hacemos la solicitud POST
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:8000/campeonatos/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'id': '0',
+        'fecha': fechaController.text,
+        'juego': juegoController.text,
+        'lista_reglas': lista_reglasControler.text,
+        'premios': premiosController.text,
+        // Asegúrate de obtener los valores de todos los campos de texto que necesites
+      }),
+    );
+
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      print('Campeonato añadido con éxito.');
     } else {
-      throw Exception('Failed to load data');
+      throw Exception('Failed to add campeonato.');
     }
+  } else {
+    // Si el formulario no es válido, entonces mostramos un mensaje de error
+    print('Por favor, completa todos los campos correctamente.');
   }
+}
 
-  Future<List<dynamic>> fetchTeamsInChampionships() async {
-    final championships = await fetchFromAPI('Campeonatos');
-    final List<dynamic> teams = [];
-    for (var championship in championships) {
-      final matches = await fetchFromAPI('partidos');
-      final championshipMatches = matches.where((match) => match['campeonato_id'] == int.parse(championship['id']));
-      for (var match in championshipMatches) {
-        for (var teamId in match['equipos_ids']) {
-          final team = await fetchFromAPI('equipos/$teamId');
-          if (!teams.any((t) => t['id'] == team[id])) {
-            teams.add(team);
-          }
-        }
-      }
-    }
-    return teams;
-  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
-      future: fetchTeamsInChampionships(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(snapshot.data![index]['nombre']),
-              );
+    return Scaffold(
+      appBar: PreferredSize(
+    preferredSize: Size.fromHeight(kToolbarHeight),
+    child: Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/appba.jpg'),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        AppBar(
+          title: Text('CAMPEONATOS'),
+          titleTextStyle: TextStyle(
+            fontFamily: 'Outfit',
+            fontSize: 22,
+            letterSpacing: 4,
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+        ),
+      ],
+    ),
+  ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/wall.jpeg'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextFormField(
+                  controller: fechaController,
+                  decoration: InputDecoration(labelText: 'Fecha'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor, introduce una fecha.';
+                    }
+                    return null;
+                  },
+                  onTap: () async {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                  final DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (pickedDate != null) {
+                    final TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (pickedTime != null) {
+                      final DateTime finalDateTime = DateTime(
+                        pickedDate.year,
+                        pickedDate.month,
+                        pickedDate.day,
+                        pickedTime.hour,
+                        pickedTime.minute,
+                      );
+                      fecha = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(finalDateTime.toUtc());
+                      fechaController.text = fecha;
+                    }
+                  }
+                },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Juego'),
+                  onChanged: (value) {
+                    juego = value;
+                    id = "0";
+                  },
+                ),
+                TextFormField(
+            decoration: InputDecoration(labelText: 'Lista de reglas (separadas por comas)'),
+            onChanged: (value) {
+              lista_reglas = value.split(',');
             },
-          );
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-        return const CircularProgressIndicator();
-      },
+          ),
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Premios (separados por comas)'),
+            onChanged: (value) {
+              premios = value.split(',');
+            },
+          ),
+                ElevatedButton(
+                  onPressed: () async {
+                      await addCampeonato(fecha, juego, lista_reglas, premios, id);
+                      setState(() {
+                      });
+                  },
+                  child: Text('Añadir Campeonato'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

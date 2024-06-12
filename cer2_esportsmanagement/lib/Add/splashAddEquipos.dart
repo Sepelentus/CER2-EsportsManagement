@@ -28,7 +28,6 @@ class _AgregarEquipoState extends State<AgregarEquipo> {
       throw Exception('Failed to save team name');
     }
 
-    // Actualiza el estado del widget para forzar una reconstrucción
     setState(() {});
   }
   @override
