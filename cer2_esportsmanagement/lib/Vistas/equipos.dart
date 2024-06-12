@@ -4,7 +4,11 @@ import 'package:cer2_esportsmanagement/Splash/splashJugadores.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+// ignore: must_be_immutable
 class VistaEquipos extends StatefulWidget {
+  String nombre = '';
+  String id = '';
+
   @override
   State<VistaEquipos> createState() => _VistaEquiposState();
 }
@@ -30,6 +34,27 @@ Future<List<Equipo>> fetchEquipos() async {
     return equiposJson.map((json) => Equipo.fromJson(json)).toList();
   } else {
     throw Exception('Failed to load equipos');
+  }
+}
+
+Future<void> updateEquipo(int id, String nombre) async {
+  final response = await http.put(
+    Uri.parse('http://10.0.2.2:8000/equipos/$id'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'id' : id,
+      'nombre': nombre,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    print(' updated successfully.');
+  } else {
+    print('Failed to update  Status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    throw Exception('Failed to update ');
   }
 }
 
@@ -97,12 +122,63 @@ class _VistaEquiposState extends State<VistaEquipos> {
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255,48,25,95))),
                         leading: Icon(Icons.sports_esports, size: 35, color: const Color.fromARGB(255,48,25,95),),
-                        trailing: IconButton(
-                          icon : Icon(Icons.arrow_forward_ios),
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder:(context) => JugadoresPage(equipoId: snapshot.data![index].id.toString())));
-                            print(snapshot.data![index].id);
-                          }),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              color: Colors.white,
+                              onPressed: () {
+                                TextEditingController idController = TextEditingController(text: snapshot.data![index].id.toString());
+                                TextEditingController nombreController = TextEditingController(text: snapshot.data![index].nombre);
+                              showDialog(
+                                context: context,
+                                  builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('Editar Equipo'),
+                                    content: SingleChildScrollView(
+                                      child: ListBody(
+                                        children: [
+                                          TextField(
+                                          controller: idController,
+                                          decoration: InputDecoration(hintText: "ID"),
+                                          enabled: false, // Esto hace que el TextField sea de solo lectura
+                                          ),
+                                          TextFormField(
+                                            controller: nombreController,
+                                            decoration: InputDecoration(hintText: 'Nombre del equipo'),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('Cancelar'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text('Guardar'),
+                                        onPressed: ()  {
+                                          updateEquipo(int.parse(idController.text), nombreController.text);
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                              },
+                            ),
+                            IconButton(
+                              icon : Icon(Icons.arrow_forward_ios),
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder:(context) => JugadoresPage(equipoId: snapshot.data![index].id.toString())));
+                                print(snapshot.data![index].id);
+                              }),
+                          ],
+                        ),
                         tileColor: const Color.fromARGB(255,229,203,93),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),

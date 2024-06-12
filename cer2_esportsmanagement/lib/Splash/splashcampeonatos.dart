@@ -147,7 +147,7 @@ class SplashCampeonatos extends StatelessWidget {
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage(
-                                "assets/images/Cardwall.jpg"), // Reemplaza esto con la ruta de tu imagen
+                                "assets/images/Cardwall.jpg"), 
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -248,7 +248,6 @@ class SplashCampeonatos extends StatelessWidget {
                                                 TextButton(
                                                   child: Text('Guardar'),
                                                   onPressed: () {
-                                                    // Aquí puedes llamar a tu función updateCampeonato
                                                     updateCampeonato(fechaController.text, juegoController.text, reglasController.text.split(','), premiosController.text.split(','), int.parse(idController.text));
                                                     Navigator.of(context).pop();
                                                   },
