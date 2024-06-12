@@ -8,7 +8,7 @@ class SplashAddPartido extends StatefulWidget {
 }
 
 class _SplashAddPartidoState extends State<SplashAddPartido> {
-  final _formKey = GlobalKey<FormState>();
+  //final _formKey = GlobalKey<FormState>();
   int id = 0;
   String fecha = '';
   List<int> equipos_ids = [];

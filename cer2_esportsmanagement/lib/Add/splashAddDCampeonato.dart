@@ -97,6 +97,11 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                     style: TextStyle(color: const Color.fromARGB(255,48,25,95)),
                     controller: fechaController,
                     decoration: InputDecoration(
+                      errorStyle: TextStyle(
+                        color: Color.fromARGB(255, 240, 3, 3),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15
+                      ),
                 border: OutlineInputBorder(
                   borderRadius: const BorderRadius.all(
                     const Radius.circular(10.0),
@@ -105,11 +110,16 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                 filled: true,
                 hintStyle: TextStyle(color: Colors.grey[700]),
                 hintText: "Fecha",
+                prefixIcon: Icon(Icons.calendar_today, color: Color.fromARGB(255, 255,255,255)),
                 fillColor: const Color.fromARGB(255,229,203,93)),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor, introduce una fecha.';
                       }
+                      if (value.length < 19) {
+                        return 'Por favor, introduce una fecha válida.';
+                      }
+                      
                       return null;
                     },
                     onTap: () async {
@@ -149,6 +159,7 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                     const Radius.circular(10.0),
                   ),
                 ),
+                prefixIcon: Icon(Icons.sports_esports, color: Color.fromARGB(255, 255,255,255),),
                 filled: true,
                 hintStyle: TextStyle(color: Colors.grey[700]),
                 hintText: "Juego",
@@ -156,6 +167,18 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor, introduce una juego.';
+                      }
+                      if (value.length < 4) {
+                        return 'Por favor, introduce un juego válido.';
+                      }
+                      if (value.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-]'))) {
+                        return 'Por favor, no uses caracteres especiales.';
+                      }
+                      if (value.contains(',')) {
+                        return 'Por favor, no uses comas.';
+                      }
+                      if (value.contains(RegExp(r'^[0-9]'))) {
+                        return 'Por favor, no empieces por números.';
                       }
                       return null;
                     },
@@ -169,6 +192,7 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
               style: TextStyle(color: const Color.fromARGB(255,48,25,95)),
                     controller: lista_reglasControler,
                     decoration: InputDecoration(
+                prefixIcon: Icon(Icons.rule, color: Color.fromARGB(255, 255,255,255)),
                 border: OutlineInputBorder(
                   borderRadius: const BorderRadius.all(
                     const Radius.circular(10.0),
@@ -182,6 +206,19 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                       if (value == null || value.isEmpty) {
                         return 'Por favor, introduce una Lista de reglas.';
                       }
+                      if (value.length < 4) {
+                        return 'Por favor, introduce una lista de reglas válida.';
+                      }
+                      if (value.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-]'))) {
+                        return 'Por favor, no uses caracteres especiales.';
+                      }
+                      if (value.contains('.')) {
+                        return 'Por favor, usa comas en vez de puntos.';
+                      }
+                      if (value.contains(RegExp(r'^[0-9]'))) {
+                        return 'Por favor, no empieces por números.';
+                      }
+                      
                       return null;
                     },
               onChanged: (value) {
@@ -201,11 +238,22 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                 filled: true,
                 hintStyle: TextStyle(color: Colors.grey[700]),
                 hintText: "Premios (separados por comas)",
+                prefixIcon: Icon(Icons.emoji_events, color: Color.fromARGB(255, 255,255,255)),
                 fillColor: const Color.fromARGB(255,229,203,93)),
               validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor, introduce un premio.';
                       }
+                      if (value.length < 4) {
+                        return 'Por favor, introduce un premio válido.';
+                      }
+                      if (value.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-]'))) {
+                        return 'Por favor, no uses caracteres especiales.';
+                      }
+                      if (value.contains(',')) {
+                        return 'Por favor, usa puntos en vez de comas.';
+                      }
+                      
                       return null;
                     },
               onChanged: (value) {

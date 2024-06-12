@@ -37,6 +37,7 @@ Future<List<Equipo>> fetchEquipos() async {
   }
 }
 
+
 Future<void> updateEquipo(int id, String nombre) async {
   final response = await http.put(
     Uri.parse('http://10.0.2.2:8000/equipos/$id'),
@@ -188,11 +189,17 @@ class _VistaEquiposState extends State<VistaEquipos> {
                                 },
                               ),
                               IconButton(
-                                icon : Icon(Icons.arrow_forward_ios, size: 20, color: const Color.fromARGB(255,229,203,93),),
-                                onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder:(context) => JugadoresPage(equipoId: snapshot.data![index].id.toString())));
-                                  print(snapshot.data![index].id);
-                                }),
+    icon : Icon(Icons.arrow_forward_ios, size: 20, color: const Color.fromARGB(255,229,203,93),),
+    onPressed: () {
+      Navigator.push(
+        context, 
+        MaterialPageRoute(
+          builder:(context) => JugadoresPage(equipoId: int.parse(snapshot.data![index].id.toString())),
+        )
+      );
+      print(snapshot.data![index].id);
+    }
+  ),
                             ],
                           ),
                           tileColor: const Color.fromARGB(255,229,203,93),
