@@ -194,35 +194,35 @@ class SplashCampeonatos extends StatelessWidget {
                                                       enabled: false, // Esto hace que el TextField sea de solo lectura
                                                     ),
                                                     TextFormField(
-                  controller: fechaController,
-                  decoration: InputDecoration(labelText: 'Fecha'),
-                  onTap: () async {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                  final DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (pickedDate != null) {
-                    final TimeOfDay? pickedTime = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (pickedTime != null) {
-                      final DateTime finalDateTime = DateTime(
-                        pickedDate.year,
-                        pickedDate.month,
-                        pickedDate.day,
-                        pickedTime.hour,
-                        pickedTime.minute,
-                      );
-                      fecha = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(finalDateTime.toUtc());
-                      fechaController.text = fecha;
-                    }
-                  }
-                },
-                ),
+                                                              controller: fechaController,
+                                                              decoration: InputDecoration(labelText: 'Fecha'),
+                                                              onTap: () async {
+                                                              FocusScope.of(context).requestFocus(new FocusNode());
+                                                              final DateTime? pickedDate = await showDatePicker(
+                                                                context: context,
+                                                                initialDate: DateTime.now(),
+                                                                firstDate: DateTime(2000),
+                                                                lastDate: DateTime(2100),
+                                                              );
+                                                              if (pickedDate != null) {
+                                                                final TimeOfDay? pickedTime = await showTimePicker(
+                                                                  context: context,
+                                                                  initialTime: TimeOfDay.now(),
+                                                                );
+                                                                if (pickedTime != null) {
+                                                                  final DateTime finalDateTime = DateTime(
+                                                                    pickedDate.year,
+                                                                    pickedDate.month,
+                                                                    pickedDate.day,
+                                                                    pickedTime.hour,
+                                                                    pickedTime.minute,
+                                                                  );
+                                                                  fecha = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(finalDateTime.toUtc());
+                                                                  fechaController.text = fecha;
+                                                                }
+                                                              }
+                                                            },
+                                                            ),
                                                     TextField(
                                                       controller: juegoController,
                                                       decoration: InputDecoration(hintText: "Juego"),
