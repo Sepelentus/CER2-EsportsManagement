@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cer2_esportsmanagement/Add/splashAddJugador.dart';
 
 class VistaCalendarios extends StatelessWidget {
   const VistaCalendarios({super.key});
@@ -50,6 +51,13 @@ class VistaCalendarios extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder:(context) => SplashAddJugador()));
+        },
+        child: Icon(Icons.add),
+        backgroundColor: const Color.fromARGB(255,229,203,93),
       ),
     );
   }
