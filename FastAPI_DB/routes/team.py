@@ -154,6 +154,29 @@ async def read_equipo_by_id(equipo_id: int, db: AsyncSession = Depends(get_db)):
         nombre=equipo.nombre
     )
 
+# Get equipos of the campeonato
+@router.get("/equipos/campeonato/{campeonato_id}", response_model=List[EquipoSchema])
+async def get_equipos_for_campeonato(campeonato_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Partido).where(Partido.campeonato_id == campeonato_id))
+    partidos = result.scalars().all()
+
+    # Get the 'equipo_id's from the 'partidos'
+    equipo_ids = []
+    for partido in partidos:
+        result = await db.execute(
+            select(EquipoPartido.equipo_id).join(Equipo, Equipo.c.id == EquipoPartido.equipo_id).where(EquipoPartido.partido_id == partido.id)
+        )
+        equipo_ids += [row[0] for row in result.fetchall()]
+
+    # Query all 'equipos' at once
+    result = await db.execute(select(Equipo).where(Equipo.c.id.in_(equipo_ids)))
+    equipos = result.fetchall()
+
+    return [EquipoSchema(
+        id=equipo.id,
+        nombre=equipo.nombre,
+    ) for equipo in equipos]
+
 @router.get("/jugadores/", response_model=List[JugadorSchema])
 async def read_jugadores(db: AsyncSession = Depends(get_db)):
     j = Jugador.join(Equipo, Jugador.c.equipo_id == Equipo.c.id)

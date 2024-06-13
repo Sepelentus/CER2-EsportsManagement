@@ -241,7 +241,7 @@ class _JugadoresPageState extends State<JugadoresPage> {
                                           ),
                                           TextFormField(
                                             initialValue: jugadores[index]
-                                                    ['equipo_id']
+                                                    ['equipo_nombre']
                                                 .toString(),
                                             onChanged: (value) {
                                               jugadores[index]['equipo_id'] =

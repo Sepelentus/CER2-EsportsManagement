@@ -328,7 +328,7 @@ Future<void> fetchEquipos() async {
                               selectedEquipoId);
                           setState(() {});
                         },
-                        child: Text('Añadir Campeonato', style: TextStyle(color: Colors.amber),
+                        child: Text('Añadir jugador', style: TextStyle(color: Colors.amber),
                   )),
                       
                     ],
