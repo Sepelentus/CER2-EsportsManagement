@@ -32,8 +32,8 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
         'id': '0',
         'fecha': fechaController.text,
         'juego': juegoController.text,
-        'lista_reglas': lista_reglasControler.text,
-        'premios': premiosController.text,
+        'lista_reglas': lista_reglas,
+        'premios': premios,
       }),
     );
 
@@ -254,9 +254,7 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                       if (value.length < 4) {
                         return 'Por favor, introduce un premio válido.';
                       }
-                      if (value.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-]'))) {
-                        return 'Por favor, no uses caracteres especiales.';
-                      }
+                    
                       if (value.contains(',')) {
                         return 'Por favor, usa puntos en vez de comas.';
                       }

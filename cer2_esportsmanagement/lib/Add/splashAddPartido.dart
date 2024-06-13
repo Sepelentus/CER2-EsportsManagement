@@ -19,8 +19,8 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
   final fechaController = TextEditingController();
   // Lista de equipos
   List<dynamic> equipos = [];
-  int selectedFirstEquipoId = 1;
-  int selectedSecondEquipoId = 2;
+  int selectedFirstEquipoId = 14;
+  int selectedSecondEquipoId = 15;
   // Lista de campeonatos
   List<dynamic> campeonatos = [];
   int selectedCampeonatoId = 1;
