@@ -17,7 +17,7 @@ class _SplashAddJugadorState extends State<SplashAddJugador> {
   // Lista para los nombres de equipos
   List<dynamic> equipos = [];
   int selectedEquipoId = 1;
-    final nombreController = TextEditingController();
+  final nombreController = TextEditingController();
   final juegoController = TextEditingController();
   final edadController = TextEditingController();
   final selectedEquipoIdcontroller = TextEditingController();

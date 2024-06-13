@@ -131,6 +131,7 @@ class SplashCampeonatos extends StatelessWidget {
               ),
             ),
           ),
+          SizedBox(height: 10),
           FutureBuilder<List<Campeonato>>(
             future: fetchCampeonatos(),
             builder: (context, snapshot) {
@@ -140,9 +141,10 @@ class SplashCampeonatos extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return Card(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(26)),
                       margin: EdgeInsets.all(5),
                       elevation: 10,
+                      
                       child: Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
