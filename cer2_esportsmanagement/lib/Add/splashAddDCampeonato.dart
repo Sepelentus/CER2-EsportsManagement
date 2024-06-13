@@ -172,7 +172,7 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                       if (value.length < 4) {
                         return 'Por favor, introduce un juego válido.';
                       }
-                      if (value.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-]'))) {
+                      if (value.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%-]'))) {
                         return 'Por favor, no uses caracteres especiales.';
                       }
                       if (value.contains(',')) {
@@ -274,7 +274,7 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
         side: BorderSide(color: Colors.amber, width: 2.0),
       ),
     ),
-    padding: WidgetStateProperty.all<EdgeInsets>(EdgeInsets.all(10.0)), // Espaciado interno
+    padding: WidgetStateProperty.all<EdgeInsets>(EdgeInsets.all(10.0)), 
   ),
                     onPressed: () async {
                         await addCampeonato(fecha, juego, lista_reglas, premios, id);

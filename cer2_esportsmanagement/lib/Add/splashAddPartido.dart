@@ -19,13 +19,13 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
   final fechaController = TextEditingController();
   // Lista de equipos
   List<dynamic> equipos = [];
-  int selectedFirstEquipoId = 14;
-  int selectedSecondEquipoId = 15;
+  int selectedFirstEquipoId = 19;
+  int selectedSecondEquipoId = 16;
   // Lista de campeonatos
   List<dynamic> campeonatos = [];
   int selectedCampeonatoId = 1;
 
-  // Getter para obtener los nombres de equipo
+    // Getter para obtener los nombres de equipo
   Future<void> fetchEquipos() async {
     final response = await http.get(Uri.parse('http://10.0.2.2:8000/equipos/'));
     if (response.statusCode == 200) {
@@ -40,7 +40,6 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
       throw Exception('Failed to fetch equipos.');
     }
   }
-
   Future<void> fetchCampeonatos() async {
     final response =
         await http.get(Uri.parse('http://10.0.2.2:8000/campeonatos/'));
@@ -56,7 +55,6 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
       throw Exception('Failed to fetch campeonatos.');
     }
   }
-
   // Post para los jugadores
   Future<void> addPartido(
     String fecha,
@@ -78,21 +76,18 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
         'campeonato_id': campeonato_id,
       }),
     );
-
     if (response.statusCode == 200) {
       print('Partido añadido con éxito.');
     } else {
       throw Exception('Failed to add partido.');
     }
   }
-
   @override
   void initState() {
     super.initState();
     fetchEquipos();
     fetchCampeonatos();
   }
-
   // Hacer widgets correspondientes futuro developer de aqui
   @override
   Widget build(BuildContext context) {
@@ -175,7 +170,6 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
                                 if (value.length < 19) {
                                   return 'Por favor, introduce una fecha válida.';
                                 }
-
                                 return null;
                               },
                               onTap: () async {
@@ -296,9 +290,7 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
                                 if (value.contains(',')) {
                                   return 'Por favor, no uses comas';
                                 }
-
                                 lugar = value.toUpperCase();
-
                                 return null;
                               },
                               onChanged: (value) {

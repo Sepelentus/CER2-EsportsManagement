@@ -80,7 +80,6 @@ Future<void> deleteCampeonato(int id) async {
     throw Exception('Failed to delete campeonato.');
   }
 }
-
 // ignore: must_be_immutable
 class SplashCampeonatos extends StatelessWidget {
   String fecha = '';
@@ -94,6 +93,8 @@ class SplashCampeonatos extends StatelessWidget {
   get campeonatoId => 0;
 
   @override
+
+  
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(

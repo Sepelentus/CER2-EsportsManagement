@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 class VistaEquipos extends StatefulWidget {
   String nombre = '';
   String id = '';
+  List<dynamic> equipos = [];
 
   @override
   State<VistaEquipos> createState() => _VistaEquiposState();
@@ -37,6 +38,48 @@ Future<List<Equipo>> fetchEquipos() async {
   }
 }
 
+Future<List<dynamic>> fetchJugadores() async {
+  final response = await http.get(Uri.parse('http://10.0.2.2:8000/jugadores'));
+
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed to load jugadores');
+  }
+}
+
+Future<void> deleteEquipos(BuildContext context, int id) async {
+  final jugadores = await fetchJugadores();
+  final jugadoresDelEquipo = jugadores.where((jugador) => jugador['equipo_id'] == id).toList();
+
+  if (jugadoresDelEquipo.isNotEmpty) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('Tienes jugadores en el equipo. Eliminalos primero antes de eliminar el equipo.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return;
+  }
+
+  final response = await http.delete(Uri.parse('http://10.0.2.2:8000/equipos/$id'));
+
+  if (response.statusCode != 200) {
+    print('Failed to delete equipo. Status code: ${response.statusCode}. Body: ${response.body}');
+    throw Exception('Failed to delete equipo.');
+  }
+}
 
 Future<void> updateEquipo(int id, String nombre) async {
   final response = await http.put(
@@ -66,6 +109,7 @@ class _VistaEquiposState extends State<VistaEquipos> {
   void initState() {
     super.initState();
     futureEquipos = fetchEquipos();
+    //deleteEquipos(0);
   }
 
   @override
@@ -189,17 +233,31 @@ class _VistaEquiposState extends State<VistaEquipos> {
                                 },
                               ),
                               IconButton(
-    icon : Icon(Icons.arrow_forward_ios, size: 20, color: const Color.fromARGB(255,229,203,93),),
-    onPressed: () {
-      Navigator.push(
-        context, 
-        MaterialPageRoute(
-          builder:(context) => JugadoresPage(equipoId: int.parse(snapshot.data![index].id.toString())),
-        )
-      );
-      print(snapshot.data![index].id);
-    }
-  ),
+                              icon: Icon(
+                                Icons.delete,
+                                size: 20,
+                              ),
+                              color: Colors.red,
+                              onPressed: () async {
+                                await deleteEquipos(context,snapshot.data![index].id);
+                                setState(() {
+                                  //equipos.removeAt(index);
+                                });
+                              },
+                            ),
+                              IconButton(
+                                icon : Icon(Icons.arrow_forward_ios, size: 20, color: const Color.fromARGB(255,229,203,93),),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(
+                                      builder:(context) => JugadoresPage(equipoId: int.parse(snapshot.data![index].id.toString())),
+                                    )
+                                  );
+                                  print(snapshot.data![index].id);
+                                }
+                              ),
+                              
                             ],
                           ),
                           tileColor: const Color.fromARGB(255,229,203,93),
