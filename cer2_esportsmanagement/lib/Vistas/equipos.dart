@@ -111,7 +111,7 @@ class _VistaEquiposState extends State<VistaEquipos> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
-                  padding: const EdgeInsets.all(10),
+                  padding: EdgeInsets.all(10),
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     return Card(
