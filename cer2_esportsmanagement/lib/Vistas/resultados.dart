@@ -51,6 +51,7 @@ class VistaResultados extends StatelessWidget {
             ),
           ),
         ],
+        
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:cer2_esportsmanagement/Splash/splashcampeonatos.dart';
 import 'package:cer2_esportsmanagement/Vistas/AddJugador.dart';
-//import 'package:cer2_esportsmanagement/Vistas/campeonatos.dart';
+import 'package:cer2_esportsmanagement/Add/splashAddPartido.dart';
 import 'package:cer2_esportsmanagement/Vistas/resultados.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -17,7 +17,7 @@ class PaginaPrincipal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: Container(
@@ -32,11 +32,11 @@ class PaginaPrincipal extends StatelessWidget {
             labelColor: const Color.fromARGB(255,229,203,93),
             unselectedLabelColor: Colors.white60,
             indicatorColor: const Color.fromARGB(255,23,184,255),
-            tabs: [Tab(icon: Icon(BoxIcons.bx_trophy)), Tab(icon: Icon(BoxIcons.bx_notepad)), Tab(icon: Icon(BoxIcons.bx_user_plus))],
+            tabs: [Tab(icon: Icon(BoxIcons.bx_trophy)), Tab(icon: Icon(BoxIcons.bx_notepad)), Tab(icon: Icon(BoxIcons.bx_user_plus)), Tab(icon: Icon(BoxIcons.bx_game))],
           ),
         ),
         body: TabBarView(
-          children: [SplashCampeonatos(), VistaResultados(), SplashAddJugador()],
+          children: [SplashCampeonatos(), VistaResultados(), SplashAddJugador(), SplashAddPartido()],
         ),
       ),
     );
