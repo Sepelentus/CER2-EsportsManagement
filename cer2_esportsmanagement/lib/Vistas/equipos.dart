@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:cer2_esportsmanagement/Add/splashAddEquipos.dart';
 import 'package:cer2_esportsmanagement/Splash/splashJugadores.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -51,38 +50,7 @@ Future<List<dynamic>> fetchJugadores() async {
   }
 }
 
-Future<void> deleteEquipos(BuildContext context, int id) async {
-  final jugadores = await fetchJugadores();
-  final jugadoresDelEquipo = jugadores.where((jugador) => jugador['equipo_id'] == id).toList();
 
-  if (jugadoresDelEquipo.isNotEmpty) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text('Tienes jugadores en el equipo. Eliminalos primero antes de eliminar el equipo.'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-    return;
-  }
-
-  final response = await http.delete(Uri.parse('http://10.0.2.2:8000/equipos/$id'));
-
-  if (response.statusCode != 200) {
-    print('Failed to delete equipo. Status code: ${response.statusCode}. Body: ${response.body}');
-    throw Exception('Failed to delete equipo.');
-  }
-}
 
 Future<void> updateEquipo(int id, String nombre) async {
   final response = await http.put(
@@ -236,19 +204,6 @@ class _VistaEquiposState extends State<VistaEquipos> {
                                 },
                               ),
                               IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                size: 20,
-                              ),
-                              color: Colors.red,
-                              onPressed: () async {
-                                await deleteEquipos(context,snapshot.data![index].id);
-                                setState(() {
-                                  //equipos.removeAt(index);
-                                });
-                              },
-                            ),
-                              IconButton(
                                 icon : Icon(Icons.arrow_forward_ios, size: 20, color: const Color.fromARGB(255,229,203,93),),
                                 onPressed: () {
                                   Navigator.push(
@@ -283,13 +238,7 @@ class _VistaEquiposState extends State<VistaEquipos> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder:(context) => AgregarEquipo()));
-        },
-        child: Icon(Icons.add),
-        backgroundColor: const Color.fromARGB(255,229,203,93),
-      ),
+      
     );
   }
 }

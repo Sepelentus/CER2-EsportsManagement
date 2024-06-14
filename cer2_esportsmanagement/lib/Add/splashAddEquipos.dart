@@ -90,7 +90,7 @@ class _AgregarEquipoState extends State<AgregarEquipo> {
                       filled: true,
                       fillColor: const Color.fromARGB(255, 48, 25, 95),
                       prefixIcon:
-                          Icon(Icons.date_range_outlined, color: Colors.amber),
+                          Icon(Icons.group, color: Colors.amber),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25.0),
                         borderSide: BorderSide(color: Colors.amber, width: 2.0),

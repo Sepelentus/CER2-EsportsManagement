@@ -19,13 +19,13 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
   final fechaController = TextEditingController();
   // Lista de equipos
   List<dynamic> equipos = [];
-  int selectedFirstEquipoId = 19;
-  int selectedSecondEquipoId = 16;
+  int selectedFirstEquipoId = 3;
+  int selectedSecondEquipoId = 4;
   // Lista de campeonatos
   List<dynamic> campeonatos = [];
   int selectedCampeonatoId = 1;
 
-    // Getter para obtener los nombres de equipo
+  // Getter para obtener los nombres de equipo
   Future<void> fetchEquipos() async {
     final response = await http.get(Uri.parse('http://10.0.2.2:8000/equipos/'));
     if (response.statusCode == 200) {
@@ -40,6 +40,7 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
       throw Exception('Failed to fetch equipos.');
     }
   }
+
   Future<void> fetchCampeonatos() async {
     final response =
         await http.get(Uri.parse('http://10.0.2.2:8000/campeonatos/'));
@@ -55,6 +56,7 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
       throw Exception('Failed to fetch campeonatos.');
     }
   }
+
   // Post para los jugadores
   Future<void> addPartido(
     String fecha,
@@ -63,31 +65,35 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
     int campeonato_id,
     int id,
   ) async {
-    final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/partidos/'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'id': 0,
-        'fecha': fecha,
-        'equipos_ids': equipos_ids,
-        'lugar': lugar,
-        'campeonato_id': campeonato_id,
-      }),
-    );
-    if (response.statusCode == 200) {
-      print('Partido añadido con éxito.');
-    } else {
-      throw Exception('Failed to add partido.');
+    if (_formKey.currentState!.validate()) {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8000/partidos/'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'id': 0,
+          'fecha': fecha,
+          'equipos_ids': equipos_ids,
+          'lugar': lugar,
+          'campeonato_id': campeonato_id,
+        }),
+      );
+      if (response.statusCode == 200) {
+        print('Partido añadido con éxito.');
+      } else {
+        throw Exception('Failed to add partido.');
+      }
     }
   }
+
   @override
   void initState() {
     super.initState();
     fetchEquipos();
     fetchCampeonatos();
   }
+
   // Hacer widgets correspondientes futuro developer de aqui
   @override
   Widget build(BuildContext context) {
@@ -137,7 +143,7 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
                             SizedBox(height: 10),
                             TextFormField(
                               style: TextStyle(
-                                  color: const Color.fromARGB(255, 48, 25, 95)),
+                                  color: Color.fromARGB(255, 255, 230, 0)),
                               controller: fechaController,
                               decoration: InputDecoration(
                                 labelText: 'Fecha de partido',
@@ -199,6 +205,7 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
                                     fecha = DateFormat(
                                             "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
                                         .format(finalDateTime.toUtc());
+                                        
                                     fechaController.text = fecha;
                                   }
                                 }
@@ -258,7 +265,7 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
                                 fillColor:
                                     const Color.fromARGB(255, 48, 25, 95),
                                 prefixIcon: Icon(
-                                  Icons.games,
+                                  Icons.pin_drop,
                                   color: Colors.amber,
                                 ),
                                 border: OutlineInputBorder(
@@ -351,7 +358,7 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
                                   setState(() {});
                                 },
                                 child: Text(
-                                  'Añadir Campeonato',
+                                  'Añadir Partido',
                                   style: TextStyle(color: Colors.amber),
                                 )),
                           ]))))

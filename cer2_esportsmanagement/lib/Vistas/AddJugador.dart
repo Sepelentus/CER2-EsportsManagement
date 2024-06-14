@@ -222,6 +222,9 @@ Future<void> fetchEquipos() async {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, ingresa una edad';
                           }
+                          if (value == '') {
+                            return 'Por favor, ingresa un valor';
+                          }
                           if (int.tryParse(value) == null) {
                             return 'Por favor, ingresa un valor numerico';
                           }
