@@ -9,6 +9,7 @@ class Splashaddresultado extends StatefulWidget {
 
 
 class _SplashaddresultadoState extends State<Splashaddresultado> {
+  
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
