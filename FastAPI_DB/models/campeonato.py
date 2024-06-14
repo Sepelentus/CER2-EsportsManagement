@@ -1,13 +1,11 @@
 from sqlalchemy import Table, Column, Integer, String, Date, JSON, ForeignKey
-from config.db import meta
+from config.db import meta, Base
 from typing import Optional
 
-Campeonato = Table(
-    'campeonatos', meta,
-    Column('id', Integer, primary_key=True),
-    Column('fecha', Date),
-    Column('juego', String(40)),
-    Column('lista_reglas', JSON),
-    Column('premios', JSON)
-    # Column('partidos_ids', Integer, ForeignKey('partidos.id'),)
-)
+class Campeonato(Base):
+    __tablename__ = 'campeonatos'
+    id = Column(Integer, primary_key=True)
+    fecha = Column(Date)
+    juego = Column(String(40))
+    lista_reglas = Column(JSON)
+    premios = Column(JSON)

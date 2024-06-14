@@ -6,11 +6,12 @@ from sqlalchemy.orm import joinedload
 from typing import List
 
 from config.db import SessionLocal
-from models.equipo import Equipo, Jugador, Partido, EquipoPartido
+from models.equipo import Equipo, Jugador, Partido, EquipoPartido, Resultado
 from models.campeonato import Campeonato
 from schemas.team import Equipo as EquipoSchema
 from schemas.player import Jugador as JugadorSchema
 from schemas.game import Partido as PartidoSchema
+from schemas.results_game import Result as ResultSchema
 from schemas.championship import Campeonato as CampeonatoSchema
 
 import ast
@@ -74,6 +75,19 @@ async def create_partido(partido: PartidoSchema, db: AsyncSession = Depends(get_
 
     return partido
 
+@router.post("/resultados/", response_model=ResultSchema)
+async def create_resultado(result: ResultSchema, db: AsyncSession = Depends(get_db)):
+    # Asociar jugadores existentes al equipo
+    query = insert(Resultado).values(
+        result=result.result,
+        partido_id=result.partido_id
+    )
+    result_proxy = await db.execute(query)
+    await db.commit()
+    result_id = result_proxy.lastrowid
+
+    return {"id": result_id, "result": result.result, "partido_id": result.partido_id}
+
 @router.post("/campeonatos/", response_model=CampeonatoSchema)
 async def create_campeonato(campeonato: CampeonatoSchema, db: AsyncSession = Depends(get_db)):
     query = insert(Campeonato).values(
@@ -89,7 +103,7 @@ async def create_campeonato(campeonato: CampeonatoSchema, db: AsyncSession = Dep
 
     # Associate partidos with the campeonato
     # for partido_id in campeonato.partidos_ids:
-    #     query = update(Partido).where(Partido.c.id == partido_id).values(campeonato_id=campeonato_id)
+    #     query = update(Partido).where(Partido.id == partido_id).values(campeonato_id=campeonato_id)
     #     await db.execute(query)
 
     await db.commit()
@@ -98,14 +112,14 @@ async def create_campeonato(campeonato: CampeonatoSchema, db: AsyncSession = Dep
 
 @router.put("/equipos/{equipo_id}", response_model=EquipoSchema)
 async def update_equipo(equipo_id: int, equipo: EquipoSchema, db: AsyncSession = Depends(get_db)):
-    query = update(Equipo).where(Equipo.c.id == equipo_id).values(nombre=equipo.nombre)
+    query = update(Equipo).where(Equipo.id == equipo_id).values(nombre=equipo.nombre)
     await db.execute(query)
     await db.commit()
     return {**equipo.dict(), "id": equipo_id}
 
 @router.put("/jugadores/{jugador_id}", response_model=JugadorSchema)
 async def update_jugador(jugador_id: int, jugador: JugadorSchema, db: AsyncSession = Depends(get_db)):
-    query = update(Jugador).where(Jugador.c.id == jugador_id).values(nombre=jugador.nombre, juego=jugador.juego, edad=jugador.edad, caracteristicas=jugador.caracteristicas, equipo_id=jugador.equipo_id)
+    query = update(Jugador).where(Jugador.id == jugador_id).values(nombre=jugador.nombre, juego=jugador.juego, edad=jugador.edad, caracteristicas=jugador.caracteristicas, equipo_id=jugador.equipo_id)
     await db.execute(query)
     await db.commit()
     return {**jugador.dict(), "id": jugador_id}
@@ -128,7 +142,7 @@ async def update_partido(partido_id: int, partido: PartidoSchema, db: AsyncSessi
 
 @router.put("/campeonatos/{campeonato_id}", response_model=CampeonatoSchema)
 async def update_campeonato(campeonato_id: int, campeonato: CampeonatoSchema, db: AsyncSession = Depends(get_db)):
-    query = update(Campeonato).where(Campeonato.c.id == campeonato_id).values(fecha=campeonato.fecha, juego=campeonato.juego, lista_reglas=str(campeonato.lista_reglas), premios=str(campeonato.premios))
+    query = update(Campeonato).where(Campeonato.id == campeonato_id).values(fecha=campeonato.fecha, juego=campeonato.juego, lista_reglas=str(campeonato.lista_reglas), premios=str(campeonato.premios))
     await db.execute(query)
     await db.commit()
     return {**campeonato.dict(), "id": campeonato_id}
@@ -137,7 +151,7 @@ async def update_campeonato(campeonato_id: int, campeonato: CampeonatoSchema, db
 @router.get("/equipos/", response_model=List[EquipoSchema])
 async def read_equipos(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Equipo))
-    equipos = result.fetchall()
+    equipos = result.scalars().all()
     return [EquipoSchema(
         id=equipo.id,
         nombre=equipo.nombre,
@@ -145,8 +159,8 @@ async def read_equipos(db: AsyncSession = Depends(get_db)):
 
 @router.get("/equipos/{equipo_id}", response_model=EquipoSchema)
 async def read_equipo_by_id(equipo_id: int, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Equipo).where(Equipo.c.id == equipo_id))
-    equipo = result.fetchone()
+    result = await db.execute(select(Equipo).where(Equipo.id == equipo_id))
+    equipo = result.scalars().one()
     if equipo is None:
         raise HTTPException(status_code=404, detail="Equipo not found")
     return EquipoSchema(
@@ -164,13 +178,13 @@ async def get_equipos_for_campeonato(campeonato_id: int, db: AsyncSession = Depe
     equipo_ids = []
     for partido in partidos:
         result = await db.execute(
-            select(EquipoPartido.equipo_id).join(Equipo, Equipo.c.id == EquipoPartido.equipo_id).where(EquipoPartido.partido_id == partido.id)
+            select(EquipoPartido.equipo_id).join(Equipo, Equipo.id == EquipoPartido.equipo_id).where(EquipoPartido.partido_id == partido.id)
         )
         equipo_ids += [row[0] for row in result.fetchall()]
 
     # Query all 'equipos' at once
-    result = await db.execute(select(Equipo).where(Equipo.c.id.in_(equipo_ids)))
-    equipos = result.fetchall()
+    result = await db.execute(select(Equipo).where(Equipo.id.in_(equipo_ids)))
+    equipos = result.scalars().all()
 
     return [EquipoSchema(
         id=equipo.id,
@@ -179,10 +193,18 @@ async def get_equipos_for_campeonato(campeonato_id: int, db: AsyncSession = Depe
 
 @router.get("/jugadores/", response_model=List[JugadorSchema])
 async def read_jugadores(db: AsyncSession = Depends(get_db)):
-    j = Jugador.join(Equipo, Jugador.c.equipo_id == Equipo.c.id)
-    query = select(Jugador, Equipo.c.nombre.label('equipo_nombre')).select_from(j)
+    # Start a SELECT query for Jugador
+    query = select(Jugador)
+
+    # Join with Equipo on the condition Jugador.equipo_id == Equipo.id
+    query = query.join(Equipo, Jugador.equipo_id == Equipo.id)
+
+    # Select additional columns from Equipo
+    query = query.add_columns(Equipo.nombre.label('equipo_nombre'))
+
     result = await db.execute(query)
-    jugadores = result.fetchall()
+    jugadores = result.scalars().all()
+
     return [JugadorSchema(
         id=jugador.id,
         nombre=jugador.nombre,
@@ -190,7 +212,6 @@ async def read_jugadores(db: AsyncSession = Depends(get_db)):
         edad=jugador.edad,
         caracteristicas=jugador.caracteristicas,
         equipo_id=jugador.equipo_id,
-        equipo_nombre=jugador.equipo_nombre,
     ) for jugador in jugadores]
 
 #Use ast.literal_eval to make a string to a list.
@@ -199,18 +220,14 @@ async def read_jugadores(db: AsyncSession = Depends(get_db)):
 @router.get("/partidos/", response_model=List[PartidoSchema])
 async def read_partidos(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Partido).options(joinedload(Partido.equipos)))
-    result = result.unique()  # Ensure each row is unique
-    partidos = result.fetchall()
-    for row in partidos:
-        partido = row[0]  # Get the Partido instance from the row
-        print(partido)  # Print out the partido object
+    partidos = result.unique().scalars().all()
     return [PartidoSchema(
         id=partido.id,
         fecha=partido.fecha,
         lugar=partido.lugar,
         campeonato_id=partido.campeonato_id,
         equipos_ids=[equipo.equipo_id for equipo in partido.equipos]
-    ) for row in partidos for partido in row]
+    ) for partido in partidos]
 
 @router.get("/partidos/{partido_id}", response_model=PartidoSchema)
 async def read_partido_by_id(partido_id: int, db: AsyncSession = Depends(get_db)):
@@ -229,7 +246,7 @@ async def read_partido_by_id(partido_id: int, db: AsyncSession = Depends(get_db)
 @router.get("/campeonatos/", response_model=List[CampeonatoSchema])
 async def read_campeonatos(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Campeonato))
-    campeonatos = result.fetchall()
+    campeonatos = result.scalars().all()
     return [CampeonatoSchema(
         id=campeonato.id,
         fecha=campeonato.fecha,
@@ -240,42 +257,65 @@ async def read_campeonatos(db: AsyncSession = Depends(get_db)):
 
 @router.get("/campeonatos/{campeonato_id}", response_model=CampeonatoSchema)
 async def read_campeonato(campeonato_id: int, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Campeonato).where(Campeonato.c.id == campeonato_id))
+    result = await db.execute(select(Campeonato).where(Campeonato.id == campeonato_id))
     campeonato = result.fetchone()
     # Query the Partido table to get the list of partido_ids associated with this campeonato
     result = await db.execute(select(Partido.id).where(Partido.campeonato_id == campeonato_id))
-    partidos = result.fetchall()
+    partidos = result.scalars().all()
     partido_ids = [partido.id for partido in partidos]
     return {**campeonato._asdict(), "partidos_ids": partido_ids, "lista_reglas": ast.literal_eval(campeonato.lista_reglas), "premios": ast.literal_eval(campeonato.premios)}
 #Deletes by id and all of a table
 
+# Get all resultados
+@router.get("/resultados/", response_model=List[ResultSchema])
+async def read_resultados(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Resultado))
+    resultados = result.scalars().all()
+    return resultados
+
+@router.get("/resultados/{resultado_id}", response_model=ResultSchema)
+async def read_resultado_by_id(resultado_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Resultado).where(Resultado.id == resultado_id))
+    resultado = result.scalar_one_or_none()
+    if resultado is None:
+        raise HTTPException(status_code=404, detail="Resultado not found")
+    return resultado
+
 @router.delete("/equipos/{equipo_id}")
 async def delete_equipo(equipo_id: int, db: AsyncSession = Depends(get_db)):
-    query = delete(Equipo).where(Equipo.c.id == equipo_id)
+    query = delete(Equipo).where(Equipo.id == equipo_id)
     await db.execute(query)
     await db.commit()
     return {"message": f"Deleted equipo with id {equipo_id}"}
 
 @router.delete("/jugadores/{jugador_id}")
 async def delete_jugador(jugador_id: int, db: AsyncSession = Depends(get_db)):
-    query = delete(Jugador).where(Jugador.c.id == jugador_id)
+    query = delete(Jugador).where(Jugador.id == jugador_id)
     await db.execute(query)
     await db.commit()
     return {"message": f"Deleted jugador with id {jugador_id}"}
 
 @router.delete("/partidos/{partido_id}")
 async def delete_partido(partido_id: int, db: AsyncSession = Depends(get_db)):
-    query = delete(Partido).where(Partido.c.id == partido_id)
+    query = delete(Partido).where(Partido.id == partido_id)
     await db.execute(query)
     await db.commit()
     return {"message": f"Deleted jugador with id {partido_id}"}
 
 @router.delete("/campeonatos/{campeonato_id}")
 async def delete_campeonato(campeonato_id: int, db: AsyncSession = Depends(get_db)):
-    query = delete(Campeonato).where(Campeonato.c.id == campeonato_id)
+    query = delete(Campeonato).where(Campeonato.id == campeonato_id)
     await db.execute(query)
     await db.commit()
     return {"message": f"Deleted campeonato with id {campeonato_id}"}
+
+@router.delete("/resultados/{resultado_id}")
+async def delete_resultado_by_id(resultado_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(delete(Resultado).where(Resultado.id == resultado_id))
+    if result.rowcount == 0:
+        raise HTTPException(status_code=404, detail="Resultado not found")
+    await db.commit()
+    return {"message": f"Resultado {resultado_id} has been deleted"}
 
 @router.delete("/equipos/")
 async def delete_all_equipos(db: AsyncSession = Depends(get_db)):
@@ -304,3 +344,9 @@ async def delete_all_campeonatos(db: AsyncSession = Depends(get_db)):
     await db.execute(query)
     await db.commit()
     return {"message": "Deleted all campeonatos"}
+
+@router.delete("/resultados/")
+async def delete_resultados(db: AsyncSession = Depends(get_db)):
+    await db.execute(delete(Resultado))
+    await db.commit()
+    return {"message": "All resultados have been deleted"}

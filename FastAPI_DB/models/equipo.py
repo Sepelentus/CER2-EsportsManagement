@@ -1,25 +1,22 @@
 from sqlalchemy import JSON, Table, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+from config.db import Base
 from sqlalchemy.ext.declarative import declarative_base
 from config.db import meta
 
-Equipo = Table(
-    'equipos', meta, 
-    Column('id', Integer, primary_key=True),
-    Column('nombre', String(40)),
-)
+class Equipo(Base):
+    __tablename__ = 'equipos'
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String(40))
 
-Jugador = Table(
-    'jugadores', meta,
-    Column('id', Integer, primary_key=True),
-    Column('nombre', String(40)),
-    Column('juego', String(40)),
-    Column('edad', Integer),
-    Column('caracteristicas', String(100)),
-    Column('equipo_id', Integer, ForeignKey('equipos.id'))
-)
-
-Base = declarative_base()
+class Jugador(Base):
+    __tablename__ = 'jugadores'
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String(40))
+    juego = Column(String(40))
+    edad = Column(Integer)
+    caracteristicas = Column(String(100))
+    equipo_id = Column(Integer, ForeignKey('equipos.id'))
 
 class Partido(Base):
     __tablename__ = 'partidos'
@@ -36,3 +33,9 @@ class EquipoPartido(Base):
     __tablename__ = 'equipo_partido'
     equipo_id = Column(Integer, ForeignKey('equipos.id'), primary_key=True)
     partido_id = Column(Integer, ForeignKey('partidos.id'), primary_key=True)
+
+class Resultado(Base):
+    __tablename__ = 'resultados'
+    id = Column(Integer, primary_key=True)
+    result = Column(String(10))
+    partido_id = Column(Integer, ForeignKey('partidos.id'))

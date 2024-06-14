@@ -17,11 +17,6 @@ class _SplashAddJugadorState extends State<SplashAddJugador> {
   // Lista para los nombres de equipos
   List<dynamic> equipos = [];
   int selectedEquipoId = 1;
-  final nombreController = TextEditingController();
-  final juegoController = TextEditingController();
-  final edadController = TextEditingController();
-  final selectedEquipoIdcontroller = TextEditingController();
-  final caracteristicasController = TextEditingController();
 
   // Getter para obtener los nombres de equipo
 Future<void> fetchEquipos() async {
@@ -49,11 +44,11 @@ Future<void> fetchEquipos() async {
       },
       body: jsonEncode(<String, dynamic>{
         'id': 0,
-        'nombre': nombreController.text,
-        'juego': juegoController.text,
-        'edad': edadController.text,
-        'caracteristicas': caracteristicasController.text,
-        'equipo_id': selectedEquipoIdcontroller.text,
+        'nombre': nombre,
+        'juego': juego,
+        'edad': edad,
+        'caracteristicas': caracteristicas,
+        'equipo_id': selectedEquipoId,
         }),
     );
 
@@ -236,19 +231,13 @@ Future<void> fetchEquipos() async {
                           if (int.tryParse(value)! > 100) {
                             return 'Por favor, ingresa un valor menor a 100';
                           }
-                          if (value.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-]'))) {
-                            return 'Por favor, no uses caracteres especiales';
-                          }
                           if (value.startsWith('0')) {
                             return 'Por favor, no empieces por 0';
                           }
                           return null;
                         },
                         onChanged: (value) {
-                          int? edad = int.tryParse(value);
-                          if (edad == null) {
-                          
-                          }
+                          edad = int.parse(value);
                         },
                       ),
                       SizedBox(height: 10),

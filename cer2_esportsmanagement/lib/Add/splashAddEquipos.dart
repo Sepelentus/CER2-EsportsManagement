@@ -143,7 +143,7 @@ class _AgregarEquipoState extends State<AgregarEquipo> {
                         });
                     },
                     
-                    child: Text('Añadir Campeonato', style: TextStyle(color: Colors.amber),
+                    child: Text('Añadir Equipo', style: TextStyle(color: Colors.amber),
                   )),
                 ],
               ),
