@@ -9,6 +9,10 @@ class VistaEquipos extends StatefulWidget {
   String nombre = '';
   String id = '';
   List<dynamic> equipos = [];
+  final int campeonatoId;
+
+  VistaEquipos({required this.campeonatoId});
+
 
   @override
   State<VistaEquipos> createState() => _VistaEquiposState();
@@ -28,16 +32,15 @@ class Equipo {
   }
 }
 
-Future<List<Equipo>> fetchEquipos() async {
-  final response = await http.get(Uri.parse('http://10.0.2.2:8000/equipos/'));
+Future<List<Equipo>> fetchEquiposForCampeonato(int campeonatoId) async {
+  final response = await http.get(Uri.parse('http://10.0.2.2:8000/equipos/campeonato/$campeonatoId'));
   if (response.statusCode == 200) {
     List<dynamic> equiposJson = jsonDecode(response.body);
     return equiposJson.map((json) => Equipo.fromJson(json)).toList();
   } else {
-    throw Exception('Failed to load equipos');
+    throw Exception('Failed to load equipos for campeonato');
   }
 }
-
 Future<List<dynamic>> fetchJugadores() async {
   final response = await http.get(Uri.parse('http://10.0.2.2:8000/jugadores'));
 
@@ -108,7 +111,7 @@ class _VistaEquiposState extends State<VistaEquipos> {
   @override
   void initState() {
     super.initState();
-    futureEquipos = fetchEquipos();
+    futureEquipos = fetchEquiposForCampeonato(widget.campeonatoId);
     //deleteEquipos(0);
   }
 

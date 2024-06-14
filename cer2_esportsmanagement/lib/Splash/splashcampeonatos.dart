@@ -310,7 +310,7 @@ class SplashCampeonatos extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => VistaEquipos()),
+                                          builder: (context) => VistaEquipos(campeonatoId: snapshot.data![index].id)),
                                     );
                                   },
                                 ),
