@@ -7,6 +7,9 @@ class SplashAddJugador extends StatefulWidget {
   _SplashAddJugadorState createState() => _SplashAddJugadorState();
 }
 
+  Future<void>? _addJugadorFuture;
+
+
 class _SplashAddJugadorState extends State<SplashAddJugador> {
   final _formKey = GlobalKey<FormState>();
   int id = 0;
@@ -307,14 +310,14 @@ Future<void> fetchEquipos() async {
                     SizedBox(height: 10),
                       ElevatedButton(
                     style: ButtonStyle( backgroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(255,48,25,95)), // Color de fondo
-    shape: WidgetStateProperty.all<RoundedRectangleBorder>( // Forma y borde
-      RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(25.0),
-        side: BorderSide(color: Colors.amber, width: 2.0),
-      ),
-    ),
-    padding: WidgetStateProperty.all<EdgeInsets>(EdgeInsets.all(10.0)), // Espaciado interno
-  ),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>( // Forma y borde
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          side: BorderSide(color: Colors.amber, width: 2.0),
+                        ),
+                      ),
+                      padding: WidgetStateProperty.all<EdgeInsets>(EdgeInsets.all(10.0)), // Espaciado interno
+                    ),
                         onPressed: () async {
                           await addJugador(nombre, juego, edad, caracteristicas, id,
                               selectedEquipoId);
@@ -322,6 +325,18 @@ Future<void> fetchEquipos() async {
                         },
                         child: Text('Añadir jugador', style: TextStyle(color: Colors.amber),
                   )),
+                  FutureBuilder<void>(
+          future: _addJugadorFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator(color: Colors.amber));
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+            // Puedes retornar un widget vacío o un mensaje de éxito aquí, según lo que necesites.
+            return Container();
+          },
+        ),
                       
                     ],
                   ),

@@ -12,6 +12,7 @@ class VistaEquipos extends StatefulWidget {
 
   VistaEquipos({required this.campeonatoId});
 
+  
 
   @override
   State<VistaEquipos> createState() => _VistaEquiposState();
@@ -28,6 +29,40 @@ class Equipo {
       id: json['id'],
       nombre: json['nombre'],
     );
+  }
+}
+
+
+Future<void> deleteEquipos(BuildContext context, int id) async {
+  final jugadores = await fetchJugadores();
+  final jugadoresDelEquipo = jugadores.where((jugador) => jugador['equipo_id'] == id).toList();
+
+  if (jugadoresDelEquipo.isNotEmpty) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('Tienes jugadores en el equipo. Eliminalos primero antes de eliminar el equipo.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return;
+  }
+
+  final response = await http.delete(Uri.parse('http://10.0.2.2:8000/equipos/$id'));
+
+  if (response.statusCode != 200) {
+    print('Failed to delete equipo. Status code: ${response.statusCode}. Body: ${response.body}');
+    throw Exception('Failed to delete equipo.');
   }
 }
 
@@ -203,6 +238,19 @@ class _VistaEquiposState extends State<VistaEquipos> {
                                 );
                                 },
                               ),
+                              IconButton(
+                              icon: Icon(
+                                Icons.delete,
+                                size: 20,
+                              ),
+                              color: Colors.red,
+                              onPressed: () async {
+                                await deleteEquipos(context,snapshot.data![index].id);
+                                setState(() {
+                                  //equipos.removeAt(index);
+                                });
+                              },
+                            ),
                               IconButton(
                                 icon : Icon(Icons.arrow_forward_ios, size: 20, color: const Color.fromARGB(255,229,203,93),),
                                 onPressed: () {
