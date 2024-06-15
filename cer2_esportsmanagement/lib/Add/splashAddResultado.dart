@@ -42,7 +42,7 @@ Future<void> fetchPartidos() async {
       if (partido['equipos_ids'] != null && partido['equipos_ids'].length >= 2) {
         String nombreEquipoLocal = await fetchNombreEquipo(partido['equipos_ids'][0]);
         String nombreEquipoVisitante = await fetchNombreEquipo(partido['equipos_ids'][1]);
-        tempNombresEquipos.add('$nombreEquipoLocal - $nombreEquipoVisitante');
+        tempNombresEquipos.add('$nombreEquipoLocal VS $nombreEquipoVisitante');
       } else {
         // Manejar el caso en que no hay suficientes equipos_ids
         // Por ejemplo, agregando un nombre de equipo predeterminado o saltando este partido

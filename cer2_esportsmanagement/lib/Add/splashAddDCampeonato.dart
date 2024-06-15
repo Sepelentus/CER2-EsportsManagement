@@ -94,7 +94,7 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   TextFormField(
-                    style: TextStyle(color: const Color.fromARGB(255,48,25,95)),
+                    style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                     controller: fechaController,
                     decoration: InputDecoration(labelText: 'Fecha de campeonato',labelStyle: TextStyle(color: Colors.white),filled: true, fillColor: const Color.fromARGB(255, 48, 25, 95), prefixIcon: Icon(Icons.date_range_outlined,color: Colors.amber),
                         border: OutlineInputBorder(
@@ -149,7 +149,7 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                   ),
                   SizedBox(height: 10),
                   TextFormField(
-                    style: TextStyle(color: const Color.fromARGB(255,48,25,95)),
+                    style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                     controller: juegoController,
                     decoration: InputDecoration(labelText: 'Juego',labelStyle: TextStyle(color: Colors.white),filled: true, fillColor: const Color.fromARGB(255, 48, 25, 95), prefixIcon: Icon(Icons.sports_esports_outlined,color: Colors.amber),
                         border: OutlineInputBorder(
@@ -190,7 +190,7 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                   ),
                   SizedBox(height: 10),
                   TextFormField(
-              style: TextStyle(color: const Color.fromARGB(255,48,25,95)),
+              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                     controller: lista_reglasControler,
                     decoration: InputDecoration(labelText: 'Lista de reglas (Separados por Coma)',labelStyle: TextStyle(color: Colors.white),filled: true, fillColor: const Color.fromARGB(255, 48, 25, 95), prefixIcon: Icon(Icons.my_library_books,color: Colors.amber),
                         border: OutlineInputBorder(
@@ -231,7 +231,7 @@ Future<void> addCampeonato(String fecha, String juego, List<String> lista_reglas
                         ),
                   SizedBox(height: 10),
               TextFormField(
-              style: TextStyle(color: const Color.fromARGB(255,48,25,95)),
+              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                     controller: premiosController,
                     decoration: InputDecoration(labelText: 'Premios (Separados por Coma)',labelStyle: TextStyle(color: Colors.white),filled: true, fillColor: const Color.fromARGB(255, 48, 25, 95), prefixIcon: Icon(Icons.my_library_books,color: Colors.amber),
                         border: OutlineInputBorder(

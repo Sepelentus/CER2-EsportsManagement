@@ -82,7 +82,7 @@ class _AgregarEquipoState extends State<AgregarEquipo> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   TextFormField(
-                    style: TextStyle(color: const Color.fromARGB(255,48,25,95)),
+                    style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                     controller: nombreController,
                     decoration: InputDecoration(
                       labelText: 'Nombre del equipo',
