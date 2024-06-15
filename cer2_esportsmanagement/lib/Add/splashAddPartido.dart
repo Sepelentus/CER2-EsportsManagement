@@ -57,26 +57,61 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
     }
   }
 
+
+  
+
   // Post para los jugadores
   Future<void> addPartido(
-    String fecha,
-    List<int> equipos_ids,
-    String lugar,
-    int campeonato_id,
-    int id,
-  ) async {
-    if (_formKey.currentState!.validate()) {
+  String fecha,
+  List<int> equipos_ids,
+  String lugar,
+  int campeonato_id,
+  int id,
+) async {
+  if (_formKey.currentState!.validate()) {
+    // Primero, obtener la lista de partidos existentes
+    final partidosExistentes = await fetchPartidos();
+    // Verificar si ya existe un partido con los mismos equipos
+    final partidoDuplicado = partidosExistentes.any((partido) {
+      final existentesEquiposIds = Set.from(partido['equipos_ids']);
+      final nuevosEquiposIds = Set.from(equipos_ids);
+      return  existentesEquiposIds.containsAll(nuevosEquiposIds) &&
+              existentesEquiposIds.length == nuevosEquiposIds.length;
+    });
+
+    if (partidoDuplicado) {
+      showDialog(
+    context: context, 
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Error'),
+        content: Text('Ya existe un partido con los mismos equipos.'),
+        actions: <Widget>[
+          FloatingActionButton.small(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop(); 
+            },
+          ),
+        ],
+      );
+    },
+  );
+      // Si se encuentra un partido duplicado, mostrar un mensaje de error
+      print('Error: Ya existe un partido con los mismos equipos.');
+    } else {
+      
       final response = await http.post(
         Uri.parse('http://10.0.2.2:8000/partidos/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          'id': 0,
           'fecha': fecha,
           'equipos_ids': equipos_ids,
           'lugar': lugar,
           'campeonato_id': campeonato_id,
+          'id': id, 
         }),
       );
       if (response.statusCode == 200) {
@@ -86,6 +121,17 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
       }
     }
   }
+}
+Future<List<dynamic>> fetchPartidos() async {
+  final response = await http.get(Uri.parse('http://10.0.2.2:8000/partidos/'));
+  if (response.statusCode == 200) {
+    return json.decode(response.body);
+  } else {
+    throw Exception('Failed to fetch partidos.');
+  }
+}
+
+  
 
   @override
   void initState() {
@@ -94,7 +140,6 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
     fetchCampeonatos();
   }
 
-  // Hacer widgets correspondientes futuro developer de aqui
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -343,7 +388,7 @@ class _SplashAddPartidoState extends State<SplashAddPartido> {
                                   ),
                                   padding: WidgetStateProperty.all<EdgeInsets>(
                                       EdgeInsets.all(
-                                          10.0)), // Espaciado interno
+                                          10.0)), 
                                 ),
                                 onPressed: () async {
                                   equipos_ids.add(selectedFirstEquipoId);

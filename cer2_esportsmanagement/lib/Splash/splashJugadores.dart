@@ -240,6 +240,7 @@ class _JugadoresPageState extends State<JugadoresPage> {
                                             },
                                           ),
                                           TextFormField(
+                                            enabled: false,
                                             initialValue: jugadores[index]
                                                     ['equipo_nombre']
                                                 .toString(),

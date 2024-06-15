@@ -11,27 +11,64 @@ class _SplashaddresultadoState extends State<Splashaddresultado> {
   final _formKey = GlobalKey<FormState>();
   int id = 0;
   String result = '';
-  int partido_id = 0;
+  int partido_id = 0;// Asume que el ID es un entero, ajusta según sea necesario
+  List<String> nombresEquipos = []; // Inicializado como lista vacía
+  String? selectedEquipo; 
+
+
+  
 
   //Lista de partidos
   List<dynamic> partidos = [];
   int selectedPartidoId = 1;
 
-  Future<void> fetchPartidos() async {
-    final response =
-        await http.get(Uri.parse('http://10.0.2.2:8000/partidos/'));
-    if (response.statusCode == 200) {
-      partidos = jsonDecode(response.body);
-      if (partidos.isNotEmpty) {
-        setState(() {
-          selectedPartidoId = partidos[0]['id'];
-        });
-      }
-      print(partidos);
-    } else {
-      throw Exception('Failed to fetch equipos.');
-    }
+  Future<String> fetchNombreEquipo(int equipoId) async {
+  final response = await http.get(Uri.parse('http://10.0.2.2:8000/equipos/$equipoId'));
+  if (response.statusCode == 200) {
+    final equipo = jsonDecode(response.body);
+    return equipo['nombre']; // Asumiendo que la respuesta tiene un campo 'nombre'
+  } else {
+    throw Exception('Failed to fetch equipo.');
   }
+}
+
+Future<void> fetchPartidos() async {
+  final response = await http.get(Uri.parse('http://10.0.2.2:8000/partidos/'));
+  if (response.statusCode == 200) {
+    List<dynamic> fetchedPartidos = jsonDecode(response.body);
+    List<String> tempNombresEquipos = [];
+    for (var partido in fetchedPartidos) {
+      // Verificar que partido['equipos_ids'] contiene al menos dos elementos
+      if (partido['equipos_ids'] != null && partido['equipos_ids'].length >= 2) {
+        String nombreEquipoLocal = await fetchNombreEquipo(partido['equipos_ids'][0]);
+        String nombreEquipoVisitante = await fetchNombreEquipo(partido['equipos_ids'][1]);
+        tempNombresEquipos.add('$nombreEquipoLocal - $nombreEquipoVisitante');
+      } else {
+        // Manejar el caso en que no hay suficientes equipos_ids
+        // Por ejemplo, agregando un nombre de equipo predeterminado o saltando este partido
+        continue; // O manejar de otra manera
+      }
+    }
+    setState(() {
+      partidos = fetchedPartidos;
+      nombresEquipos = tempNombresEquipos;
+      // Asegurarse de que selectedPartidoId tenga un valor válido
+      selectedPartidoId = partidos.isNotEmpty ? partidos[0]['id'] : 0;
+    });
+  } else {
+    throw Exception('Failed to fetch partidos.');
+  }
+}
+  Future<List<String>> fetchNombresEquipos(List<int> equiposIds) async {
+  List<String> nombresEquipos = [];
+  for (int id in equiposIds) {
+    final nombreEquipo = await fetchNombreEquipo(id); // Utiliza la función existente para obtener el nombre por ID
+    nombresEquipos.add(nombreEquipo);
+  }
+  return nombresEquipos;
+}
+
+
 
   // Post para los jugadores
   Future<void> addResultado(
@@ -79,7 +116,7 @@ class _SplashaddresultadoState extends State<Splashaddresultado> {
                 ),
               ),
               AppBar(
-                title: Text('AÑADIR PARTIDOS'),
+                title: Text('AÑADIR RESULTADO'),
                 titleTextStyle: TextStyle(
                   fontFamily: 'Outfit',
                   fontSize: 22,
@@ -161,25 +198,26 @@ class _SplashaddresultadoState extends State<Splashaddresultado> {
                             ),
                             SizedBox(height: 10),
                             DropdownButton(
-                              dropdownColor: Color.fromARGB(255, 0, 0, 0),
-                              value: selectedPartidoId,
-                              hint: Text('Selecciona la ID del partido'),
-                              onChanged: (int? nuevoValor) {
-                                setState(() {
-                                  selectedPartidoId = nuevoValor!;
-                                });
-                              },
-                              items:
-                                  partidos.map<DropdownMenuItem<int>>((partido) {
-                                return DropdownMenuItem<int>(
-                                  value: partido['id'],
-                                  child: Text('${partido['id']}',
-                                      style: TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 255, 230, 0))),
-                                );
-                              }).toList(),
-                            ),
+                                value: selectedEquipo,
+                                icon: const Icon(Icons.arrow_downward),
+                                elevation: 16,
+                                style: const TextStyle(color: Colors.deepPurple),
+                                underline: Container(
+                                  height: 2,
+                                  color: Colors.deepPurpleAccent,
+                                ),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    selectedEquipo = newValue!;
+                                  });
+                                },
+                                items: nombresEquipos.map<DropdownMenuItem<String>>((value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
                             SizedBox(height: 10),
                             ElevatedButton(
                                 style: ButtonStyle(
